@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TOutboundRecordMapper">
+    
+    <resultMap type="com.ruoyi.system.domain.TOutboundRecord" id="TOutboundRecordResult">
+        <result property="id"    column="id"    />
+        <result property="drugId"    column="drug_id"    />
+        <result property="warehouseCode"    column="warehouse_code"    />
+        <result property="drugName"    column="drug_name"    />
+        <result property="drugAlisa"    column="drug_alisa"    />
+        <result property="outboundNum"    column="outbound_num"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectTOutboundRecordVo">
+        select id, drug_id, warehouse_code, drug_name, drug_alisa, outbound_num, create_time, create_by, is_delete from t_outbound_record
+    </sql>
+
+    <select id="selectTOutboundRecordList" parameterType="com.ruoyi.system.domain.TOutboundRecord" resultType="com.ruoyi.system.domain.TOutboundRecord">
+        select tor.id id, tor.drug_id drugId, tor.warehouse_code warehouseCode, tor.drug_name drugName, tor.drug_alisa drugAlisa,
+        tor.outbound_num outboundNum, tor.create_time createTime, su.user_name userName
+        from t_outbound_record tor
+        left join sys_user su on tor.create_by = su.user_id
+        <where>
+            <if test="drugId != null  and drugId != ''"> and tor.drug_id = #{drugId}</if>
+            <if test="warehouseCode != null  and warehouseCode != ''"> and tor.warehouse_code = #{warehouseCode}</if>
+            <if test="drugName != null  and drugName != ''"> and (tor.drug_name like concat('%', #{drugName}, '%') or tor.drug_alisa like concat('%', #{drugName}, '%'))</if>
+            <if test="drugAlisa != null  and drugAlisa != ''"> and tor.drug_alisa like concat('%', #{drugAlisa}, '%')</if>
+            <if test="isDelete != null  and isDelete != ''"> and tor.is_delete = #{isDelete}</if>
+        </where>
+        order by tor.create_time desc
+    </select>
+    
+    <select id="selectTOutboundRecordById" parameterType="java.lang.String" resultMap="TOutboundRecordResult">
+        <include refid="selectTOutboundRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTOutboundRecord" parameterType="com.ruoyi.system.domain.TOutboundRecord">
+        insert into t_outbound_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="drugId != null">drug_id,</if>
+            <if test="warehouseCode != null">warehouse_code,</if>
+            <if test="drugName != null">drug_name,</if>
+            <if test="drugAlisa != null">drug_alisa,</if>
+            <if test="outboundNum != null">outbound_num,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="drugId != null">#{drugId},</if>
+            <if test="warehouseCode != null">#{warehouseCode},</if>
+            <if test="drugName != null">#{drugName},</if>
+            <if test="drugAlisa != null">#{drugAlisa},</if>
+            <if test="outboundNum != null">#{outboundNum},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTOutboundRecord" parameterType="com.ruoyi.system.domain.TOutboundRecord">
+        update t_outbound_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="drugId != null">drug_id = #{drugId},</if>
+            <if test="warehouseCode != null">warehouse_code = #{warehouseCode},</if>
+            <if test="drugName != null">drug_name = #{drugName},</if>
+            <if test="drugAlisa != null">drug_alisa = #{drugAlisa},</if>
+            <if test="outboundNum != null">outbound_num = #{outboundNum},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTOutboundRecordById" parameterType="java.lang.String">
+        delete from t_outbound_record where id = #{id}
+    </delete>
+
+    <delete id="deleteTOutboundRecordByIds" parameterType="java.lang.String">
+        delete from t_outbound_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

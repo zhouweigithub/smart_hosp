@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TWarehouseManagerMapper">
+    
+    <resultMap type="com.ruoyi.system.domain.TWarehouseManager" id="TWarehouseManagerResult">
+        <result property="id"    column="id"    />
+        <result property="drugId"    column="drug_id"    />
+        <result property="warehouseCode"    column="warehouse_code"    />
+        <result property="drugName"    column="drug_name"    />
+        <result property="drugAlisa"    column="drug_alisa"    />
+        <result property="expirationTime"    column="expiration_time"    />
+        <result property="insertNum"    column="insert_num"    />
+        <result property="residueNum"    column="residue_num"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="expireStatus"    column="expire_status"    />
+        <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectTWarehouseManagerVo">
+        select id, drug_id, warehouse_code, drug_name, drug_alisa, expiration_time, insert_num, residue_num, create_time, create_by, update_time, update_by, is_delete from t_warehouse_manager
+    </sql>
+
+    <select id="selectTWarehouseManagerList" parameterType="com.ruoyi.system.domain.TWarehouseManager" resultType="com.ruoyi.system.domain.TWarehouseManager">
+        select twm.id id, twm.drug_id drugId,twm.warehouse_code warehouseCode,twm.drug_name drugName,twm.drug_alisa drugAlisa,
+        twm.expiration_time expirationTime,twm.insert_num insertNum,twm.residue_num residueNum,twm.create_time createTime,
+        twm.create_by createBy,twm.update_time updateTime, twm.update_by updateBy, su.user_name userName
+        from t_warehouse_manager twm
+        left join sys_user su on twm.create_by = su.user_id
+        <where>
+            expire_status = '0'
+            <if test="drugId != null  and drugId != ''"> and twm.drug_id = #{drugId}</if>
+            <if test="warehouseCode != null  and warehouseCode != ''"> and twm.warehouse_code like concat('%', #{warehouseCode}, '%')</if>
+            <if test="drugName != null  and drugName != ''"> and (twm.drug_name like concat('%', #{drugName}, '%') or twm.drug_alisa like concat('%', #{drugName}, '%'))</if>
+            <if test="drugAlisa != null  and drugAlisa != ''"> and twm.drug_alisa like concat('%', #{drugAlisa}, '%')</if>
+            <if test="expirationTime != null "> and twm.expiration_time &lt;= #{expirationTime}</if>
+            <if test="insertNum != null "> and twm.insert_num = #{insertNum}</if>
+            <if test="residueNum != null "> and twm.residue_num = #{residueNum}</if>
+            <if test="residueNum != null "> and twm.residue_num = #{residueNum}</if>
+            <if test="beginTime != null  and beginTime != '' and endTime != null  and endTime != ''"> and twm.expiration_time between #{beginTime} and #{endTime}</if>
+        </where>
+        order by twm.expiration_time
+    </select>
+    
+    <select id="selectTWarehouseManagerById" parameterType="java.lang.String" resultMap="TWarehouseManagerResult">
+        <include refid="selectTWarehouseManagerVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTWarehouseManager" parameterType="com.ruoyi.system.domain.TWarehouseManager">
+        insert into t_warehouse_manager
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="drugId != null">drug_id,</if>
+            <if test="warehouseCode != null">warehouse_code,</if>
+            <if test="drugName != null">drug_name,</if>
+            <if test="drugAlisa != null">drug_alisa,</if>
+            <if test="expirationTime != null">expiration_time,</if>
+            <if test="insertNum != null">insert_num,</if>
+            <if test="residueNum != null">residue_num,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="drugId != null">#{drugId},</if>
+            <if test="warehouseCode != null">#{warehouseCode},</if>
+            <if test="drugName != null">#{drugName},</if>
+            <if test="drugAlisa != null">#{drugAlisa},</if>
+            <if test="expirationTime != null">#{expirationTime},</if>
+            <if test="insertNum != null">#{insertNum},</if>
+            <if test="residueNum != null">#{residueNum},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTWarehouseManager" parameterType="com.ruoyi.system.domain.TWarehouseManager">
+        update t_warehouse_manager
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="drugId != null">drug_id = #{drugId},</if>
+            <if test="warehouseCode != null">warehouse_code = #{warehouseCode},</if>
+            <if test="drugName != null">drug_name = #{drugName},</if>
+            <if test="drugAlisa != null">drug_alisa = #{drugAlisa},</if>
+            <if test="expirationTime != null">expiration_time = #{expirationTime},</if>
+            <if test="insertNum != null">insert_num = #{insertNum},</if>
+            <if test="residueNum != null">residue_num = #{residueNum},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="expireStatus != null">expire_status = #{expireStatus},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTWarehouseManagerById" parameterType="java.lang.String">
+        delete from t_warehouse_manager where id = #{id}
+    </delete>
+
+    <delete id="deleteTWarehouseManagerByIds" parameterType="java.lang.String">
+        delete from t_warehouse_manager where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectTWarehouseManagerValidList" parameterType="java.lang.String" resultMap="TWarehouseManagerResult">
+        <include refid="selectTWarehouseManagerVo"/>
+        where drug_id = #{drugId} and residue_num > 0 and expire_status = '0' and is_delete = '0'
+        order by expiration_time asc;
+    </select>
+
+    <select id="selectExpireDrugList" resultMap="TWarehouseManagerResult">
+        <include refid="selectTWarehouseManagerVo"/>
+        where expire_status  = '0' and  expiration_time &lt; now()
+        and residue_num > 0 and is_delete = '0'
+    </select>
+</mapper>

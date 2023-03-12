@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('出库')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-manager-edit" th:object="${tWarehouseManager}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-2 control-label">出库数量：</label>
+                <div class="col-sm-6">
+                    <input name="num" class="form-control" type="number">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "business/warehouse/manager";
+        $("#form-manager-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/wareHouseLogOutBound", $('#form-manager-edit').serialize(), callBack);
+            }
+        }
+
+        function callBack(result) {
+            if(result.code != 0){
+                $.modal.msgError(result.msg);
+            }
+        }
+
+    </script>
+</body>
+</html>

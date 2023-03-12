@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TDrugInfoMapper">
+    
+    <resultMap type="com.ruoyi.system.domain.TDrugInfo" id="TDrugInfoResult">
+        <result property="id"    column="id"    />
+        <result property="drugName"    column="drug_name"    />
+        <result property="drugAlias"    column="drug_alias"    />
+        <result property="drugCode"    column="drug_code"    />
+        <result property="drugType"    column="drug_type"    />
+        <result property="drugCategory"    column="drug_category"    />
+        <result property="drugSpecs"    column="drug_specs"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="retailPrice"    column="retail_price"    />
+        <result property="stock"    column="stock"    />
+        <result property="drugCompany"    column="drug_company"    />
+        <result property="manufactor"    column="manufactor"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectTDrugInfoVo">
+        select id, drug_name, drug_alias, drug_code, drug_type, drug_category, drug_specs, unit_price, retail_price, stock,
+            drug_company, manufactor, create_time, create_by, update_time, update_by,is_delete,sort
+        from t_drug_info
+    </sql>
+
+    <select id="selectTDrugInfoList" parameterType="com.ruoyi.system.domain.TDrugInfo" resultType="com.ruoyi.system.domain.TDrugInfo">
+        select tdi.id id, tdi.drug_name drugName, tdi.drug_alias drugAlias, tdi.drug_code drugCode, tdi.drug_type drugType,
+        tdi.drug_category drugCategory, tdi.drug_specs drugSpecs,tdi.unit_price unitPrice, tdi.retail_price retailPrice,
+        tdi.stock stock,tdi.drug_company drugCompany, tdi.manufactor manufactor, tdi.create_time createTime, tdi.create_by createBy,
+        tdi.update_time updateTime, tdi.update_by updateBy,su.user_name userName
+        from t_drug_info tdi
+        left join sys_user su on tdi.create_by = su.user_id
+        <where>  
+            <if test="drugName != null  and drugName != ''"> and (tdi.drug_name like concat('%', #{drugName}, '%') or tdi.drug_alias like concat('%', #{drugName}, '%'))</if>
+            <if test="drugAlias != null  and drugAlias != ''"> and tdi.drug_alias like concat('%', #{drugAlias}, '%')</if>
+            <if test="drugType != null  and drugType != ''"> and tdi.drug_type = #{drugType} </if>
+            <if test="drugCategory != null  and drugCategory != ''"> and tdi.drug_category = #{drugCategory} </if>
+            <if test="manufactor != null  and manufactor != ''"> and tdi.manufactor like concat('%', #{manufactor}, '%') </if>
+            <if test="isDelete != null  and isDelete != ''"> and tdi.is_delete = #{isDelete} </if>
+        </where>
+        order by tdi.sort
+    </select>
+    
+    <select id="selectTDrugInfoById" parameterType="java.lang.String" resultMap="TDrugInfoResult">
+        <include refid="selectTDrugInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTDrugInfo" parameterType="com.ruoyi.system.domain.TDrugInfo">
+        insert into t_drug_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="drugName != null">drug_name,</if>
+            <if test="drugAlias != null">drug_alias,</if>
+            <if test="drugCode != null">drug_code,</if>
+            <if test="drugType != null">drug_type,</if>
+            <if test="drugCategory != null">drug_category,</if>
+            <if test="drugSpecs != null">drug_specs,</if>
+            <if test="unitPrice != null">unit_price,</if>
+            <if test="retailPrice != null">retail_price,</if>
+            <if test="stock != null">stock,</if>
+            <if test="drugCompany != null">drug_company,</if>
+            <if test="manufactor != null">manufactor,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="sort != null">sort,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="drugName != null">#{drugName},</if>
+            <if test="drugAlias != null">#{drugAlias},</if>
+            <if test="drugCode != null">#{drugCode},</if>
+            <if test="drugType != null">#{drugType},</if>
+            <if test="drugCategory != null">#{drugCategory},</if>
+            <if test="drugSpecs != null">#{drugSpecs},</if>
+            <if test="unitPrice != null">#{unitPrice},</if>
+            <if test="retailPrice != null">#{retailPrice},</if>
+            <if test="stock != null">#{stock},</if>
+            <if test="drugCompany != null">#{drugCompany},</if>
+            <if test="manufactor != null">#{manufactor},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="sort != null">#{sort},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTDrugInfo" parameterType="com.ruoyi.system.domain.TDrugInfo">
+        update t_drug_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="drugName != null">drug_name = #{drugName},</if>
+            <if test="drugAlias != null">drug_alias = #{drugAlias},</if>
+            <if test="drugCode != null">drug_code = #{drugCode},</if>
+            <if test="drugType != null">drug_type = #{drugType},</if>
+            <if test="drugCategory != null">drug_category = #{drugCategory},</if>
+            <if test="drugSpecs != null">drug_specs = #{drugSpecs},</if>
+            <if test="unitPrice != null">unit_price = #{unitPrice},</if>
+            <if test="retailPrice != null">retail_price = #{retailPrice},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="drugCompany != null">drug_company = #{drugCompany},</if>
+            <if test="manufactor != null">manufactor = #{manufactor},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="sort != null">sort = #{sort},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTDrugInfoById" parameterType="java.lang.String">
+        delete t_drug_info set is_delete = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteTDrugInfoByIds" parameterType="java.lang.String">
+        delete t_drug_info set is_delete = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

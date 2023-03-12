@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改仓库出库记录')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-record-edit" th:object="${tOutboundRecord}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">药品种类Id：</label>
+                <div class="col-sm-8">
+                    <input name="drugId" th:field="*{drugId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">入库编号：</label>
+                <div class="col-sm-8">
+                    <input name="warehouseCode" th:field="*{warehouseCode}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">药品名称：</label>
+                <div class="col-sm-8">
+                    <input name="drugName" th:field="*{drugName}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">药品别名：</label>
+                <div class="col-sm-8">
+                    <input name="drugAlisa" th:field="*{drugAlisa}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">出库数量：</label>
+                <div class="col-sm-8">
+                    <input name="outboundNum" th:field="*{outboundNum}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">是否删除 0-否 1-是：</label>
+                <div class="col-sm-8">
+                    <input name="isDelete" th:field="*{isDelete}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/record";
+        $("#form-record-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-record-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>
