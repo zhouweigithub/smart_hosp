@@ -9,100 +9,139 @@
             text-align: center;
             padding: 10px;
         }
+
+        .scroll-pane {
+            max-height: 350px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
     </style>
 </head>
 <body class="white-bg">
 <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-    <form class="form-horizontal m" id="form-records-add">
-        <!--        <h4 class="form-header h4">新建处方</h4>-->
-        <div class="form-group">
-            <label class="col-sm-2 control-label is-required">姓名：</label>
-            <div class="col-sm-2">
-                <input name="name" class="form-control" type="text" required>
-            </div>
-
-            <label class="col-sm-2 control-label is-required">性别：</label>
-            <div class="col-sm-2">
-                <select name="sex" class="form-control">
-                    <option value="未完结">男</option>
-                    <option value="已完结">女</option>
-                </select>
-            </div>
-
-            <label class="col-sm-2 control-label is-required">年龄：</label>
-            <div class="col-sm-2">
-                <input name="age" id="age" class="form-control" type="text" required>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-sm-2 control-label is-required">电话：</label>
-            <div class="col-sm-3">
-                <input name="phone" class="form-control" type="text" required>
-            </div>
-
-            <label class="col-sm-2 control-label is-required">身份证号：</label>
-            <div class="col-sm-3">
-                <input name="idNumber" class="form-control" type="text" required onchange="idNumber_change()">
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label is-required">住址：</label>
-            <div class="col-sm-10">
-                <input name="address" class="form-control" type="text" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label is-required">诊断：</label>
-            <div class="col-sm-10">
-                <textarea name="diagnosis" class="form-control" required></textarea>
-            </div>
-        </div>
-
-
-        <!--        <h4 class="form-header h4">处方的药品信息信息</h4>-->
+    <div class="container-div">
         <div class="row">
-            <div class="col-sm-12">
-                <div class="col-sm-5">
-                    <input name="seach_keywords" id="seach_keywords" class="form-control" type="text"
-                           placeholder="请输入药品名或者别名"
-                           required>
-                </div>
-                <button type="button" class="btn btn-white btn-sm" onclick="search_drug()"><i
-                        class="fa fa-search">搜索</i>
-                </button>
+            <div class="col-sm-8">
+                <form class="form-horizontal m" id="form-records-add">
+                    <!--        <h4 class="form-header h4">新建处方</h4>-->
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-sm-2 control-label is-required">姓名：</label>
+                            <div class="col-sm-2">
+                                <input name="name" class="form-control" type="text" required>
+                            </div>
 
+                            <label class="col-sm-2 control-label is-required">性别：</label>
+                            <div class="col-sm-2">
+                                <select name="sex" class="form-control">
+                                    <option value="未完结">男</option>
+                                    <option value="已完结">女</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-2 control-label is-required">年龄：</label>
+                            <div class="col-sm-2">
+                                <input name="age" id="age" class="form-control" type="text" required>
+                            </div>
+                        </div>
 
-                <div class="col-sm-12" id="zsl-html"></div>
-                <div class="col-sm-12" id="fzsl-html"></div>
-                <div class="col-sm-12" id="qt-html"></div>
-                <!--                <button type="button" class="btn btn-white btn-sm" onclick="sub.delRow()"><i class="fa fa-minus">-->
-                <!--                    删除</i></button>-->
+                        <!--                    </div>-->
+
+                        <!--                    <div class="form-group">-->
+                        <div class="row">
+                            <label class="col-sm-2 control-label is-required">电话：</label>
+                            <div class="col-sm-3">
+                                <input name="phone" class="form-control" type="text" required>
+                            </div>
+
+                            <label class="col-sm-2 control-label is-required">身份证号：</label>
+                            <div class="col-sm-3">
+                                <input name="idNumber" class="form-control" type="text" required
+                                       onchange="idNumber_change()">
+                            </div>
+                        </div>
+
+                        <!--                    </div>-->
+                        <!--                    <div class="form-group">-->
+                        <div class="row">
+                            <label class="col-sm-2 control-label is-required">住址：</label>
+                            <div class="col-sm-10">
+                                <input name="address" class="form-control" type="text" required>
+                            </div>
+                        </div>
+                        <!--                    </div>-->
+                        <!--                    <div class="form-group">-->
+                        <div class="row">
+                            <label class="col-sm-2 control-label is-required">诊断：</label>
+                            <div class="col-sm-10">
+                                <textarea name="diagnosis" class="form-control" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <input name="seach_keywords" id="seach_keywords" class="form-control" type="text"
+                                   placeholder="请输入药品名或者别名" required>
+                        </div>
+                        <button type="button" class="btn btn-white btn-sm" onclick="search_drug()"><i
+                                class="fa fa-search">搜索</i>
+                        </button>
+                        <a href="#qt" class="pull-right col-sm-1 btn btn-white btn-sm">其他</a>
+                        <a href="#fzsl" class="pull-right col-sm-1 btn btn-white btn-sm">非注射类</a>
+                        <a href="#zsl" class="pull-right col-sm-1 btn btn-white btn-sm">注射类</a>
+                    </div>
+
+                    <div class="scroll-pane">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="col-sm-12" id="zsl-html"></div>
+                                <div class="col-sm-12" id="fzsl-html"></div>
+                                <div class="col-sm-12" id="qt-html"></div>
+
+                                <div class="col-sm-3 pull-right">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="days" placeholder="用药天数"
+                                               required>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" style="padding:5px 12px;"
+                                                    onclick="setAllDays()">Go!</button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="bootstrap-table" data-use-row-attr-func="true"
+                                           data-reorderable-rows="true"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px">
+                            <div class="col-sm-12">
+                                <div class="col-sm-9"></div>
+                                <div id="zsje" class="col-sm-3" style="display: none">注射金额:</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="col-sm-9"></div>
+                                <div id="ypje" class="col-sm-3" style="display: none">药品金额:</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="col-sm-9"></div>
+                                <div id="zje" class="col-sm-3" style="display: none">总金额:</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-4">
                 <div class="col-sm-12 select-table table-striped">
-                    <table id="bootstrap-table" data-use-row-attr-func="true" data-reorderable-rows="true"></table>
+                    <table id="bootstrap-table2" data-use-row-attr-func="true"
+                           data-reorderable-rows="true"></table>
                 </div>
-
             </div>
         </div>
-        <div class="row" style="margin-top: 10px">
-            <div class="col-sm-12">
-                <div class="col-sm-9"></div>
-                <div id="zsje" class="col-sm-3" style="display: none">注射金额:</div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="col-sm-9"></div>
-                <div id="ypje" class="col-sm-3" style="display: none">药品金额:</div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="col-sm-9"></div>
-                <div id="zje" class="col-sm-3" style="display: none">总金额:</div>
-            </div>
-        </div>
-    </form>
+    </div>
 </div>
 <th:block th:include="include :: footer"/>
 <th:block th:include="include :: datetimepicker-js"/>
@@ -133,6 +172,7 @@
     var chufang_drugs = [];
 
     var options = {
+        id: "bootstrap-table",
         pagination: false,
         showSearch: false,
         showRefresh: false,
@@ -143,13 +183,14 @@
         onReorderRow: function (data) {
             //当拖拽结束后，data为整个表格的数据
             // 当sidePagination: "server"时，拖拽行后顺序错乱，需要重新调用加载数据方法
-            $("#bootstrap-table").bootstrapTable('load', data);
+            chufang_drugs = data;
+            refresh_tabledata();
             return false;
         },
         columns: [
             {
                 field: 'index',
-                title: '序列',
+                title: '序号',
                 visible: true, //隐藏后，无法删除行
                 formatter: function (value, row, index) {
                     return row.index = index + 1; //返回行号
@@ -179,6 +220,7 @@
                 field: 'drugCount',
                 align: 'center',
                 title: '用药数量',
+                width: 40,
                 formatter: function (value, row, index) {
                     return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' value='%s' onchange=\"cell_change(" + index + ",'drugCount')\">", value);
                 }
@@ -187,6 +229,7 @@
                 field: 'drugDays',
                 align: 'center',
                 title: '用药天数',
+                width: 40,
                 formatter: function (value, row, index) {
                     return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' value='%s' onchange=\"cell_change(" + index + ",'drugDays')\">", value);
                 }
@@ -200,6 +243,7 @@
                 field: 'remarks',
                 align: 'center',
                 title: '备注',
+                width: 80,
                 formatter: function (value, row, index) {
                     return $.common.sprintf("<input class='form-control' type='text' name='remarks' value='%s' onchange=\"cell_change(" + index + ",'remarks')\">", value);
                 }
@@ -209,30 +253,65 @@
                 align: 'center',
                 formatter: function (value, row, index) {
                     var value = $.common.isNotEmpty(row.index) ? row.index : $.table.serialNumber(index);
-                    console.log("remove-value", value)
                     return '<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="removeRow(' + value + ')"><i class="fa fa-remove"></i>删除</a>';
                 }
             }],
     };
 
+    var options2 = {
+        id: "bootstrap-table2",
+        pagination: false,
+        showSearch: false,
+        showRefresh: false,
+        showToggle: false,
+        showColumns: false,
+        sidePagination: "client",
+        columns: [
+            {
+                field: 'drugName',
+                align: 'center',
+                title: '名称'
+            },
+            {
+                field: 'drugTypeStr',
+                align: 'center',
+                title: '分类'
+            },
+            {
+                field: 'retailPrice',
+                align: 'center',
+                title: '零售价'
+            },
+            {
+                field: 'drugSpecs',
+                align: 'center',
+                title: '规格'
+            },
+        ],
+    };
+
     $(function () {
         $.table.init(options);
+        $.table.init(options2);
         refresh_tabledata();
         // 获取数据字典内容
         var syfDic = [[${@dict.getType('business_syf')}]];
         syf = Number(syfDic[0].dictValue);
-        console.log(syf);
     });
 
     function refresh_tabledata() {
         $("#bootstrap-table").bootstrapTable("load", chufang_drugs);
+        $("#bootstrap-table2").bootstrapTable("load", chufang_drugs);
     }
 
     // 搜索出来的药品信息
     var drugList = []
 
     function search_drug() {
-        console.log("search_drug")
+        drugList = [];
+        $("#zsl-html").html("");
+        $("#fzsl-html").html("");
+        $("#qt-html").html("");
         var keywords = $("#seach_keywords").val().trim();
         if (keywords == "") {
             return
@@ -252,14 +331,12 @@
             success: function (res) {
                 // 一旦设置的 dataType 选项，就不再关心 服务端 响应的 Content-Type 了
                 // 客户端会主观认为服务端返回的就是 JSON 格式的字符串
-                console.log(res);
 
                 drugList = res.rows;
 
                 let zhushelei = res.rows.filter(a => a.drugType == "business_zsl")
                 let fzhushelei = res.rows.filter(a => a.drugType == "business_fzsl")
                 let qita = res.rows.filter(a => a.drugType == "business_qt")
-                console.log(zhushelei);
                 var html = "";
                 if (zhushelei.length > 0) {
                     zhushelei.forEach(item => {
@@ -268,7 +345,7 @@
                         if (item.drugName.length > 6) {
                             nameLimit6 = item.drugName.substring(0, 6) + "...";
                         }
-                        html += `<h3>注射类</h3><div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                        html += `<h3>注射类<a href="" name="zsl"></a></h3><div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
                         </div>
@@ -282,11 +359,10 @@
                     fzhushelei.forEach(item => {
                         item.drugTypeStr = "非注射类";
                         let nameLimit6 = item.drugName
-                        console.log(nameLimit6);
                         if (item.drugName.length > 6) {
                             nameLimit6 = item.drugName.substring(0, 6) + "...";
                         }
-                        html += `<h3>非注射类</h3><div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                        html += `<h3>非注射类<a href="" name="fzsl"></a></h3><div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
                         </div>
@@ -299,11 +375,10 @@
                     qita.forEach(item => {
                         item.drugTypeStr = "其他";
                         let nameLimit6 = item.drugName
-                        console.log(nameLimit6);
                         if (item.drugName.length > 6) {
                             nameLimit6 = item.drugName.substring(0, 6) + "...";
                         }
-                        html += `<h3>其他</h3><div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                        html += `<h3>其他<a href="" name="qt"></a></h3><div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
                         </div>
@@ -336,7 +411,6 @@
             totalAmounts: Number(drugItem.retailPrice * defaultCount.toFixed(2)),
             remarks: "",
         });
-        console.log(chufang_drugs)
 
         updateZje();
         refresh_tabledata();
@@ -376,7 +450,6 @@
     function cell_change(rowindex, colName) {
         let value = event.target.value
         var rowData = chufang_drugs[rowindex]
-        console.log("row index", rowindex, "cell value", value, "cell name", colName, typeof (value))
 
         if (rowData[colName] == value) {
             return
@@ -404,6 +477,20 @@
         let birthdate = new Date(year, month - 1, day)
         var age = Math.floor((new Date() - birthdate) / (1 * 24 * 60 * 60 * 1000) / 365);
         $("#age").val(age)
+    }
+
+
+    function setAllDays() {
+        var str = $("#days").val().trim();
+        if (!/^\d+$/.test(str)) {
+            $.modal.msgError("请输入一个整数");
+            return
+        }
+        var day = Number(str);
+        chufang_drugs.forEach(item => {
+            item.drugDays = day;
+        })
+        refresh_tabledata();
     }
 </script>
 </body>
