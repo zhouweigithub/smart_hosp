@@ -69,6 +69,18 @@ public class TPrescriptionRecords extends BaseEntity
     @Excel(name = "护士ID")
     private Long nurseid;
 
+    /** 注射金额 */
+    @Excel(name = "注射金额")
+    private float zsAmount;
+
+    /** 药品金额 */
+    @Excel(name = "药品金额")
+    private float drugAmount;
+
+    /** 总金额 */
+    @Excel(name = "总金额")
+    private float totalAmount;
+
     /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
@@ -77,7 +89,31 @@ public class TPrescriptionRecords extends BaseEntity
     /** 处方的药品信息信息 */
     private List<TPrescriptionDrugInfo> tPrescriptionDrugInfoList;
 
-    public void setId(Long id) 
+    public float getZsAmount() {
+        return zsAmount;
+    }
+
+    public void setZsAmount(float zsAmount) {
+        this.zsAmount = zsAmount;
+    }
+
+    public float getDrugAmount() {
+        return drugAmount;
+    }
+
+    public void setDrugAmount(float drugAmount) {
+        this.drugAmount = drugAmount;
+    }
+
+    public float getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(float totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -231,6 +267,9 @@ public class TPrescriptionRecords extends BaseEntity
             .append("pharmacyid", getPharmacyid())
             .append("nurseid", getNurseid())
             .append("crtime", getCrtime())
+            .append("zs_amount", getZsAmount())
+            .append("drug_amount", getDrugAmount())
+            .append("total_amount", getTotalAmount())
             .append("tPrescriptionDrugInfoList", getTPrescriptionDrugInfoList())
             .toString();
     }

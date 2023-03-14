@@ -43,10 +43,6 @@ public class TPrescriptionDrugInfo extends BaseEntity
     @Excel(name = "备注")
     private String remarks;
 
-    /** 创建时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date crtime;
 
     public void setPrescriptionid(Long prescriptionid) 
     {
@@ -111,15 +107,7 @@ public class TPrescriptionDrugInfo extends BaseEntity
     {
         return remarks;
     }
-    public void setCrtime(Date crtime) 
-    {
-        this.crtime = crtime;
-    }
 
-    public Date getCrtime() 
-    {
-        return crtime;
-    }
 
     @Override
     public String toString() {
@@ -131,7 +119,6 @@ public class TPrescriptionDrugInfo extends BaseEntity
             .append("days", getDays())
             .append("amount", getAmount())
             .append("remarks", getRemarks())
-            .append("crtime", getCrtime())
             .toString();
     }
 }

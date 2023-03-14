@@ -23,7 +23,6 @@
         <div class="row">
             <div class="col-sm-8">
                 <form class="form-horizontal m" id="form-records-add">
-                    <!--        <h4 class="form-header h4">新建处方</h4>-->
                     <div class="form-group">
                         <div class="row">
                             <label class="col-sm-2 control-label is-required">姓名：</label>
@@ -34,8 +33,8 @@
                             <label class="col-sm-2 control-label is-required">性别：</label>
                             <div class="col-sm-2">
                                 <select name="sex" class="form-control">
-                                    <option value="未完结">男</option>
-                                    <option value="已完结">女</option>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
                                 </select>
                             </div>
                             <label class="col-sm-2 control-label is-required">年龄：</label>
@@ -43,44 +42,35 @@
                                 <input name="age" id="age" class="form-control" type="text" required>
                             </div>
                         </div>
-
-                        <!--                    </div>-->
-
-                        <!--                    <div class="form-group">-->
                         <div class="row">
                             <label class="col-sm-2 control-label is-required">电话：</label>
                             <div class="col-sm-3">
                                 <input name="phone" class="form-control" type="text" required>
                             </div>
 
-                            <label class="col-sm-2 control-label is-required">身份证号：</label>
+                            <label class="col-sm-2 control-label">身份证号：</label>
                             <div class="col-sm-3">
-                                <input name="idNumber" class="form-control" type="text" required
+                                <input name="idNumber" class="form-control" type="text"
                                        onchange="idNumber_change()">
                             </div>
                         </div>
-
-                        <!--                    </div>-->
-                        <!--                    <div class="form-group">-->
                         <div class="row">
-                            <label class="col-sm-2 control-label is-required">住址：</label>
+                            <label class="col-sm-2 control-label">住址：</label>
                             <div class="col-sm-10">
-                                <input name="address" class="form-control" type="text" required>
+                                <input name="address" class="form-control" type="text">
                             </div>
                         </div>
-                        <!--                    </div>-->
-                        <!--                    <div class="form-group">-->
                         <div class="row">
-                            <label class="col-sm-2 control-label is-required">诊断：</label>
+                            <label class="col-sm-2 control-label">诊断：</label>
                             <div class="col-sm-10">
-                                <textarea name="diagnosis" class="form-control" required></textarea>
+                                <textarea name="diagnosis" class="form-control"></textarea>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-5">
                             <input name="seach_keywords" id="seach_keywords" class="form-control" type="text"
-                                   placeholder="请输入药品名或者别名" required>
+                                   placeholder="请输入药品名或者别名">
                         </div>
                         <button type="button" class="btn btn-white btn-sm" onclick="search_drug()"><i
                                 class="fa fa-search">搜索</i>
@@ -99,8 +89,7 @@
 
                                 <div class="col-sm-3 pull-right">
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="days" placeholder="用药天数"
-                                               required>
+                                        <input type="number" class="form-control" id="days" placeholder="用药天数">
                                         <span class="input-group-btn">
                                             <button class="btn btn-default" type="button" style="padding:5px 12px;"
                                                     onclick="setAllDays()">Go!</button>
@@ -155,7 +144,31 @@
 
     function submitHandler() {
         if ($.validate.form()) {
-            $.operate.save(prefix + "/add", $('#form-records-add').serialize());
+            //console.log($('#form-records-add').serialize())
+
+            let para = ""
+            para += $.common.sprintf("name=%s", encodeURI(document.getElementsByName("name")[0].value))
+            para += $.common.sprintf("&sex=%s", encodeURI(document.getElementsByName("sex")[0].value))
+            para += $.common.sprintf("&age=%s", encodeURI(document.getElementsByName("age")[0].value))
+            para += $.common.sprintf("&phone=%s", encodeURI(document.getElementsByName("phone")[0].value))
+            para += $.common.sprintf("&address=%s", encodeURI(document.getElementsByName("address")[0].value))
+            para += $.common.sprintf("&diagnosis=%s", encodeURI(document.getElementsByName("diagnosis")[0].value))
+            para += $.common.sprintf("&idNumber=%s", encodeURI(document.getElementsByName("idNumber")[0].value))
+            para += $.common.sprintf("&zsAmount=%s", tmpSyf)
+            para += $.common.sprintf("&drugAmount=%s", drug_amount)
+            para += $.common.sprintf("&totalAmount=%s", total_amount)
+
+            chufang_drugs.forEach((item, index) => {
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].days=%s", index, item.drugDays);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].counts=%s", index, item.drugCount);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].remarks=%s", index, encodeURI(item.remarks));
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugid=%s", index, item.drugid);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugPrice=%s", index, item.retailPrice);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].amount=%s", index, item.totalAmounts);
+            });
+
+            console.log(para);
+            $.operate.save(prefix + "/add", para);
         }
     }
 
@@ -222,7 +235,7 @@
                 title: '用药数量',
                 width: 40,
                 formatter: function (value, row, index) {
-                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' value='%s' onchange=\"cell_change(" + index + ",'drugCount')\">", value);
+                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' name='tPrescriptionDrugInfoList[%s].drugCount' value='%s' onchange=\"cell_change(%s,'drugCount')\">", index, value, index);
                 }
             },
             {
@@ -231,7 +244,7 @@
                 title: '用药天数',
                 width: 40,
                 formatter: function (value, row, index) {
-                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' value='%s' onchange=\"cell_change(" + index + ",'drugDays')\">", value);
+                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' name='tPrescriptionDrugInfoList[%s].drugDays' value='%s' onchange=\"cell_change(%s,'drugDays')\">", index, value, index);
                 }
             },
             {
@@ -245,7 +258,7 @@
                 title: '备注',
                 width: 80,
                 formatter: function (value, row, index) {
-                    return $.common.sprintf("<input class='form-control' type='text' name='remarks' value='%s' onchange=\"cell_change(" + index + ",'remarks')\">", value);
+                    return $.common.sprintf("<input class='form-control' type='text' name='tPrescriptionDrugInfoList[%s].remarks' value='%s' onchange=\"cell_change(%s,'remarks')\">", index, value, index);
                 }
             },
             {
@@ -300,6 +313,7 @@
     });
 
     function refresh_tabledata() {
+        console.log(chufang_drugs)
         $("#bootstrap-table").bootstrapTable("load", chufang_drugs);
         $("#bootstrap-table2").bootstrapTable("load", chufang_drugs);
     }
@@ -339,13 +353,14 @@
                 let qita = res.rows.filter(a => a.drugType == "business_qt")
                 var html = "";
                 if (zhushelei.length > 0) {
+                    html = "<h3>注射类<a href=\"\" name=\"zsl\"></a></h3>";
                     zhushelei.forEach(item => {
                         item.drugTypeStr = "注射类";
                         let nameLimit6 = item.drugName
                         if (item.drugName.length > 6) {
                             nameLimit6 = item.drugName.substring(0, 6) + "...";
                         }
-                        html += `<h3>注射类<a href="" name="zsl"></a></h3><div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                        html += `<div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
                         </div>
@@ -356,13 +371,14 @@
 
                 html = "";
                 if (fzhushelei.length > 0) {
+                    html = "<h3>非注射类<a href=\"\" name=\"fzsl\"></a></h3>";
                     fzhushelei.forEach(item => {
                         item.drugTypeStr = "非注射类";
                         let nameLimit6 = item.drugName
                         if (item.drugName.length > 6) {
                             nameLimit6 = item.drugName.substring(0, 6) + "...";
                         }
-                        html += `<h3>非注射类<a href="" name="fzsl"></a></h3><div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                        html += `<div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
                         </div>
@@ -372,13 +388,14 @@
                 $("#fzsl-html").html(html)
                 html = "";
                 if (qita.length > 0) {
+                    html = "<h3>其他<a href=\"\" name=\"qt\"></a></h3>";
                     qita.forEach(item => {
                         item.drugTypeStr = "其他";
                         let nameLimit6 = item.drugName
                         if (item.drugName.length > 6) {
                             nameLimit6 = item.drugName.substring(0, 6) + "...";
                         }
-                        html += `<h3>其他<a href="" name="qt"></a></h3><div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                        html += `<div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
                         </div>
@@ -401,6 +418,7 @@
         // 用药天数默认值
         let defaultDays = 1
         chufang_drugs.push({
+            drugid: drugItem.id,
             drugName: drugItem.drugName,
             drugType: drugItem.drugType,
             drugTypeStr: drugItem.drugTypeStr,
@@ -423,15 +441,15 @@
         refresh_tabledata();
     }
 
+    // 当前输液费
+    let tmpSyf = 0;
+    // 药品总金额
+    let drug_amount = 0;
+    // 处方总金额
+    let total_amount = 0;
+
     // 更新总金额
     function updateZje() {
-        // 当前输液费
-        let tmpSyf = 0;
-        // 药品总金额
-        let drug_amount = 0;
-        // 处方总金额
-        let total_amount = 0;
-
         if (chufang_drugs.find(a => a.drugType == "business_zsl") != undefined) {
             tmpSyf = syf;
             $("#zsje").css("display", "block").text("注射金额：" + syf);

@@ -1,6 +1,10 @@
 package com.ruoyi.web.controller.business;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import com.ruoyi.common.utils.DateUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,14 +25,13 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 处方信息Controller
- * 
+ *
  * @author ruoyi
  * @date 2023-03-11
  */
 @Controller
 @RequestMapping("/system/records")
-public class TPrescriptionRecordsController extends BaseController
-{
+public class TPrescriptionRecordsController extends BaseController {
     private String prefix = "system/records";
 
     @Autowired
@@ -36,8 +39,7 @@ public class TPrescriptionRecordsController extends BaseController
 
     @RequiresPermissions("system:records:view")
     @GetMapping()
-    public String records()
-    {
+    public String records() {
         return prefix + "/records";
     }
 
@@ -47,8 +49,7 @@ public class TPrescriptionRecordsController extends BaseController
     @RequiresPermissions("system:records:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(TPrescriptionRecords tPrescriptionRecords)
-    {
+    public TableDataInfo list(TPrescriptionRecords tPrescriptionRecords) {
         startPage();
         List<TPrescriptionRecords> list = tPrescriptionRecordsService.selectTPrescriptionRecordsList(tPrescriptionRecords);
         return getDataTable(list);
@@ -61,8 +62,7 @@ public class TPrescriptionRecordsController extends BaseController
     @Log(title = "处方信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
-    public AjaxResult export(TPrescriptionRecords tPrescriptionRecords)
-    {
+    public AjaxResult export(TPrescriptionRecords tPrescriptionRecords) {
         List<TPrescriptionRecords> list = tPrescriptionRecordsService.selectTPrescriptionRecordsList(tPrescriptionRecords);
         ExcelUtil<TPrescriptionRecords> util = new ExcelUtil<TPrescriptionRecords>(TPrescriptionRecords.class);
         return util.exportExcel(list, "处方信息数据");
@@ -72,8 +72,7 @@ public class TPrescriptionRecordsController extends BaseController
      * 新增处方信息
      */
     @GetMapping("/add")
-    public String add()
-    {
+    public String add() {
         return prefix + "/add";
     }
 
@@ -84,8 +83,15 @@ public class TPrescriptionRecordsController extends BaseController
     @Log(title = "处方信息", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(TPrescriptionRecords tPrescriptionRecords)
-    {
+    public AjaxResult addSave(TPrescriptionRecords tPrescriptionRecords) {
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+        tPrescriptionRecords.setSkinTest("");
+        tPrescriptionRecords.setCrtime(DateUtils.getNowDate());
+        tPrescriptionRecords.setStatus("未完结");
+        tPrescriptionRecords.setDoctorid(getSysUser().getUserId());
+        System.out.println(tPrescriptionRecords.getCrtime()+" getCrtime******************");
+        System.out.println(tPrescriptionRecords.getSex()+" getSex******************");
+        System.out.println(tPrescriptionRecords.getTPrescriptionDrugInfoList().get(0).getDrugid()+" getDrugid******************");
         return toAjax(tPrescriptionRecordsService.insertTPrescriptionRecords(tPrescriptionRecords));
     }
 
@@ -94,8 +100,7 @@ public class TPrescriptionRecordsController extends BaseController
      */
     @RequiresPermissions("system:records:edit")
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Long id, ModelMap mmap)
-    {
+    public String edit(@PathVariable("id") Long id, ModelMap mmap) {
         TPrescriptionRecords tPrescriptionRecords = tPrescriptionRecordsService.selectTPrescriptionRecordsById(id);
         mmap.put("tPrescriptionRecords", tPrescriptionRecords);
         return prefix + "/edit";
@@ -108,8 +113,7 @@ public class TPrescriptionRecordsController extends BaseController
     @Log(title = "处方信息", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(TPrescriptionRecords tPrescriptionRecords)
-    {
+    public AjaxResult editSave(TPrescriptionRecords tPrescriptionRecords) {
         return toAjax(tPrescriptionRecordsService.updateTPrescriptionRecords(tPrescriptionRecords));
     }
 
@@ -118,10 +122,9 @@ public class TPrescriptionRecordsController extends BaseController
      */
     @RequiresPermissions("system:records:remove")
     @Log(title = "处方信息", businessType = BusinessType.DELETE)
-    @PostMapping( "/remove")
+    @PostMapping("/remove")
     @ResponseBody
-    public AjaxResult remove(String ids)
-    {
+    public AjaxResult remove(String ids) {
         return toAjax(tPrescriptionRecordsService.deleteTPrescriptionRecordsByIds(ids));
     }
 }
