@@ -22,48 +22,50 @@
     <div class="container-div">
         <div class="row">
             <div class="col-sm-8">
-                <form class="form-horizontal m" id="form-records-add">
+                <form class="form-horizontal m" id="form-records-add" th:object="${tPrescriptionRecords}">
+                    <input name="id" th:field="*{id}" type="hidden">
                     <div class="form-group">
                         <div class="row">
                             <label class="col-sm-2 control-label is-required">姓名：</label>
                             <div class="col-sm-2">
-                                <input name="name" class="form-control" type="text" required>
+                                <input name="name" th:field="*{name}" class="form-control" type="text" required>
                             </div>
 
                             <label class="col-sm-2 control-label is-required">性别：</label>
                             <div class="col-sm-2">
-                                <select name="sex" class="form-control">
-                                    <option value="男">男</option>
-                                    <option value="女">女</option>
+                                <select name="sex" id="sex" class="form-control"
+                                        th:with="type=${@dict.getType('sys_user_sex')}" onchange="change()">
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                            th:value="${dict.dictValue}" th:field="*{sex}"></option>
                                 </select>
                             </div>
                             <label class="col-sm-2 control-label is-required">年龄：</label>
                             <div class="col-sm-2">
-                                <input name="age" id="age" class="form-control" type="text" required>
+                                <input name="age" th:field="*{age}" id="age" class="form-control" type="text" required>
                             </div>
                         </div>
                         <div class="row">
                             <label class="col-sm-2 control-label is-required">电话：</label>
                             <div class="col-sm-3">
-                                <input name="phone" class="form-control" type="text" required>
+                                <input name="phone" th:field="*{phone}" class="form-control" type="text" required>
                             </div>
 
                             <label class="col-sm-2 control-label">身份证号：</label>
                             <div class="col-sm-3">
-                                <input name="idNumber" class="form-control" type="text"
+                                <input name="idNumber" th:field="*{idNumber}" class="form-control" type="text"
                                        onchange="idNumber_change()">
                             </div>
                         </div>
                         <div class="row">
                             <label class="col-sm-2 control-label">住址：</label>
                             <div class="col-sm-10">
-                                <input name="address" class="form-control" type="text">
+                                <input name="address" th:field="*{address}" class="form-control" type="text">
                             </div>
                         </div>
                         <div class="row">
                             <label class="col-sm-2 control-label">诊断：</label>
                             <div class="col-sm-10">
-                                <textarea name="diagnosis" class="form-control"></textarea>
+                                <textarea name="diagnosis" class="form-control">[[*{diagnosis}]]</textarea>
                             </div>
                         </div>
                     </div>
@@ -137,6 +139,10 @@
 <script th:src="@{/ajax/libs/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.js}"></script>
 <script th:src="@{/ajax/libs/bootstrap-table/extensions/reorder-rows/jquery.tablednd.js}"></script>
 <script th:inline="javascript">
+    // 药品分类
+    var business_zsl = [[${@dict.getType('sys_drug_type')}]];
+
+
     var prefix = ctx + "system/records"
     $("#form-records-add").validate({
         focusCleanup: true
@@ -159,12 +165,12 @@
             para += $.common.sprintf("&totalAmount=%s", total_amount)
 
             chufang_drugs.forEach((item, index) => {
-                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].days=%s", index, item.drugDays);
-                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].counts=%s", index, item.drugCount);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].days=%s", index, item.days);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].counts=%s", index, item.counts);
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].remarks=%s", index, encodeURI(item.remarks));
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugid=%s", index, item.drugid);
-                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugPrice=%s", index, item.retailPrice);
-                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].amount=%s", index, item.totalAmounts);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugPrice=%s", index, item.drugPrice);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].amount=%s", index, item.amount);
             });
 
             console.log(para);
@@ -182,7 +188,7 @@
     var syf = 0;
 
     // 处方的药品信息
-    var chufang_drugs = [];
+    var chufang_drugs = [[${tPrescriptionRecords.tPrescriptionDrugInfoList}]];
 
     var options = {
         id: "bootstrap-table",
@@ -220,7 +226,7 @@
                 title: '分类'
             },
             {
-                field: 'retailPrice',
+                field: 'drugPrice',
                 align: 'center',
                 title: '零售价'
             },
@@ -230,25 +236,25 @@
                 title: '规格'
             },
             {
-                field: 'drugCount',
+                field: 'counts',
                 align: 'center',
                 title: '用药数量',
                 width: 40,
                 formatter: function (value, row, index) {
-                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' name='tPrescriptionDrugInfoList[%s].drugCount' value='%s' onchange=\"cell_change(%s,'drugCount')\">", index, value, index);
+                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' name='tPrescriptionDrugInfoList[%s].counts' value='%s' onchange=\"cell_change(%s,'counts')\">", index, value, index);
                 }
             },
             {
-                field: 'drugDays',
+                field: 'days',
                 align: 'center',
                 title: '用药天数',
                 width: 40,
                 formatter: function (value, row, index) {
-                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' name='tPrescriptionDrugInfoList[%s].drugDays' value='%s' onchange=\"cell_change(%s,'drugDays')\">", index, value, index);
+                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' name='tPrescriptionDrugInfoList[%s].days' value='%s' onchange=\"cell_change(%s,'days')\">", index, value, index);
                 }
             },
             {
-                field: 'totalAmounts',
+                field: 'amount',
                 align: 'center',
                 title: '合计金额'
             },
@@ -291,7 +297,7 @@
                 title: '分类'
             },
             {
-                field: 'retailPrice',
+                field: 'drugPrice',
                 align: 'center',
                 title: '零售价'
             },
@@ -422,11 +428,11 @@
             drugName: drugItem.drugName,
             drugType: drugItem.drugType,
             drugTypeStr: drugItem.drugTypeStr,
-            retailPrice: drugItem.retailPrice,
+            drugPrice: drugItem.retailPrice,
             drugSpecs: drugItem.drugSpecs,
-            drugCount: defaultCount,
-            drugDays: defaultDays,
-            totalAmounts: Number(drugItem.retailPrice * defaultCount.toFixed(2)),
+            counts: defaultCount,
+            days: defaultDays,
+            amount: Number(drugItem.retailPrice * defaultCount.toFixed(2)),
             remarks: "",
         });
 
@@ -458,7 +464,7 @@
             $("#zsje").css("display", "none");
         }
 
-        chufang_drugs.forEach(a => drug_amount += a.totalAmounts);
+        chufang_drugs.forEach(a => drug_amount += a.amount);
         total_amount = tmpSyf + drug_amount;
 
         $("#ypje").css("display", "block").text("药品金额：" + drug_amount);
@@ -476,8 +482,8 @@
         // 字段赋新值
         rowData[colName] = value
         // 计算总金额
-        if (colName == "drugCount") {
-            rowData["totalAmounts"] = Number((value * rowData["retailPrice"]).toFixed(2))
+        if (colName == "counts") {
+            rowData["amount"] = Number((value * rowData["drugPrice"]).toFixed(2))
         }
         updateZje();
         refresh_tabledata();
@@ -506,7 +512,7 @@
         }
         var day = Number(str);
         chufang_drugs.forEach(item => {
-            item.drugDays = day;
+            item.days = day;
         })
         refresh_tabledata();
     }
