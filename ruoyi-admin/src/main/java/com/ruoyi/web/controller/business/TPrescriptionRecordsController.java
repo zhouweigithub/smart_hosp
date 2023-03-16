@@ -79,7 +79,7 @@ public class TPrescriptionRecordsController extends BaseController {
         } else {
             tPrescriptionRecords = new TPrescriptionRecords();
         }
-        System.out.println(id);
+        System.out.println("id:" + id);
         mmap.put("tPrescriptionRecords", tPrescriptionRecords);
         return prefix + "/add";
     }
@@ -92,15 +92,17 @@ public class TPrescriptionRecordsController extends BaseController {
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(TPrescriptionRecords tPrescriptionRecords) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
-        tPrescriptionRecords.setSkinTest("");
-        tPrescriptionRecords.setCrtime(DateUtils.getNowDate());
-        tPrescriptionRecords.setStatus("未完结");
-        tPrescriptionRecords.setDoctorid(getSysUser().getUserId());
-        System.out.println(tPrescriptionRecords.getCrtime() + " getCrtime******************");
-        System.out.println(tPrescriptionRecords.getSex() + " getSex******************");
-        System.out.println(tPrescriptionRecords.getTPrescriptionDrugInfoList().get(0).getDrugid() + " getDrugid******************");
-        return toAjax(tPrescriptionRecordsService.insertTPrescriptionRecords(tPrescriptionRecords));
+        if (tPrescriptionRecords.getId() == 0) {
+            // 新建处方
+            tPrescriptionRecords.setSkinTest("");
+            tPrescriptionRecords.setCrtime(DateUtils.getNowDate());
+            tPrescriptionRecords.setStatus("未完结");
+            tPrescriptionRecords.setDoctorid(getSysUser().getUserId());
+            return toAjax(tPrescriptionRecordsService.insertTPrescriptionRecords(tPrescriptionRecords));
+        } else {
+            // 修改处方
+            return toAjax(tPrescriptionRecordsService.updateTPrescriptionRecords(tPrescriptionRecords));
+        }
     }
 
     /**

@@ -140,7 +140,7 @@
 <script th:src="@{/ajax/libs/bootstrap-table/extensions/reorder-rows/jquery.tablednd.js}"></script>
 <script th:inline="javascript">
     // 药品分类
-    var business_zsl = [[${@dict.getType('sys_drug_type')}]];
+    var drugTypes = [[${@dict.getType('sys_drug_type')}]];
 
 
     var prefix = ctx + "system/records"
@@ -153,7 +153,12 @@
             //console.log($('#form-records-add').serialize())
 
             let para = ""
-            para += $.common.sprintf("name=%s", encodeURI(document.getElementsByName("name")[0].value))
+            var id = document.getElementsByName("id")[0].value;
+            if (id == "") {
+                id = 0;
+            }
+            para += $.common.sprintf("id=%s", id)
+            para += $.common.sprintf("&name=%s", encodeURI(document.getElementsByName("name")[0].value))
             para += $.common.sprintf("&sex=%s", encodeURI(document.getElementsByName("sex")[0].value))
             para += $.common.sprintf("&age=%s", encodeURI(document.getElementsByName("age")[0].value))
             para += $.common.sprintf("&phone=%s", encodeURI(document.getElementsByName("phone")[0].value))
@@ -171,6 +176,9 @@
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugid=%s", index, item.drugid);
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugPrice=%s", index, item.drugPrice);
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].amount=%s", index, item.amount);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugName=%s", index, item.drugName);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugType=%s", index, item.drugType);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugSpecs=%s", index, item.drugSpecs);
             });
 
             console.log(para);
@@ -184,11 +192,11 @@
         autoclose: true
     });
 
-    // 输液费
+    // 输液费，固定值
     var syf = 0;
 
     // 处方的药品信息
-    var chufang_drugs = [[${tPrescriptionRecords.tPrescriptionDrugInfoList}]];
+    var chufang_drugs = [[${tPrescriptionRecords.tPrescriptionDrugInfoList}]] || [];
 
     var options = {
         id: "bootstrap-table",
@@ -221,9 +229,12 @@
                 title: '名称'
             },
             {
-                field: 'drugTypeStr',
+                field: 'drugType',
                 align: 'center',
-                title: '分类'
+                title: '分类',
+                formatter: function (value, row, index) {
+                    return $.table.selectDictLabel(drugTypes, value);
+                }
             },
             {
                 field: 'drugPrice',
@@ -316,6 +327,7 @@
         // 获取数据字典内容
         var syfDic = [[${@dict.getType('business_syf')}]];
         syf = Number(syfDic[0].dictValue);
+        updateZje();
     });
 
     function refresh_tabledata() {
@@ -448,11 +460,11 @@
     }
 
     // 当前输液费
-    let tmpSyf = 0;
+    let tmpSyf = [[${tPrescriptionRecords.zsAmount}]];
     // 药品总金额
-    let drug_amount = 0;
+    let drug_amount = [[${tPrescriptionRecords.drugAmount}]];
     // 处方总金额
-    let total_amount = 0;
+    let total_amount = [[${tPrescriptionRecords.totalAmount}]];
 
     // 更新总金额
     function updateZje() {
@@ -463,7 +475,8 @@
             tmpSyf = 0;
             $("#zsje").css("display", "none");
         }
-
+        drug_amount = 0;
+        total_amount = 0;
         chufang_drugs.forEach(a => drug_amount += a.amount);
         total_amount = tmpSyf + drug_amount;
 
@@ -484,8 +497,8 @@
         // 计算总金额
         if (colName == "counts") {
             rowData["amount"] = Number((value * rowData["drugPrice"]).toFixed(2))
+            updateZje();
         }
-        updateZje();
         refresh_tabledata();
     }
 

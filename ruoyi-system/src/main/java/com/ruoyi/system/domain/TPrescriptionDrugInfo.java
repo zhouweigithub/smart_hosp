@@ -1,7 +1,6 @@
 package com.ruoyi.system.domain;
 
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.math.BigDecimal;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -9,9 +8,9 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 处方的药品信息对象 t_prescription_drug_info
- * 
+ *
  * @author ruoyi
- * @date 2023-03-11
+ * @date 2023-03-16
  */
 public class TPrescriptionDrugInfo extends BaseEntity
 {
@@ -23,9 +22,21 @@ public class TPrescriptionDrugInfo extends BaseEntity
     /** 药品ID */
     private String drugid;
 
+    /** 药品名称 */
+    @Excel(name = "药品名称")
+    private String drugName;
+
+    /** 药品分类 */
+    @Excel(name = "药品分类")
+    private String drugType;
+
+    /** 药品规格 */
+    @Excel(name = "药品规格")
+    private String drugSpecs;
+
     /** 药品单价 */
     @Excel(name = "药品单价")
-    private Long drugPrice;
+    private BigDecimal drugPrice;
 
     /** 药品数量 */
     @Excel(name = "药品数量")
@@ -37,88 +48,116 @@ public class TPrescriptionDrugInfo extends BaseEntity
 
     /** 药品金额 */
     @Excel(name = "药品金额")
-    private Long amount;
+    private BigDecimal amount;
 
     /** 备注 */
     @Excel(name = "备注")
     private String remarks;
 
-
-    public void setPrescriptionid(Long prescriptionid) 
+    public void setPrescriptionid(Long prescriptionid)
     {
         this.prescriptionid = prescriptionid;
     }
 
-    public Long getPrescriptionid() 
+    public Long getPrescriptionid()
     {
         return prescriptionid;
     }
-    public void setDrugid(String drugid) 
+    public void setDrugid(String drugid)
     {
         this.drugid = drugid;
     }
 
-    public String getDrugid() 
+    public String getDrugid()
     {
         return drugid;
     }
-    public void setDrugPrice(Long drugPrice) 
+    public void setDrugName(String drugName)
+    {
+        this.drugName = drugName;
+    }
+
+    public String getDrugName()
+    {
+        return drugName;
+    }
+    public void setDrugType(String drugType)
+    {
+        this.drugType = drugType;
+    }
+
+    public String getDrugType()
+    {
+        return drugType;
+    }
+    public void setDrugSpecs(String drugSpecs)
+    {
+        this.drugSpecs = drugSpecs;
+    }
+
+    public String getDrugSpecs()
+    {
+        return drugSpecs;
+    }
+    public void setDrugPrice(BigDecimal drugPrice)
     {
         this.drugPrice = drugPrice;
     }
 
-    public Long getDrugPrice() 
+    public BigDecimal getDrugPrice()
     {
         return drugPrice;
     }
-    public void setCounts(Long counts) 
+    public void setCounts(Long counts)
     {
         this.counts = counts;
     }
 
-    public Long getCounts() 
+    public Long getCounts()
     {
         return counts;
     }
-    public void setDays(Long days) 
+    public void setDays(Long days)
     {
         this.days = days;
     }
 
-    public Long getDays() 
+    public Long getDays()
     {
         return days;
     }
-    public void setAmount(Long amount) 
+    public void setAmount(BigDecimal amount)
     {
         this.amount = amount;
     }
 
-    public Long getAmount() 
+    public BigDecimal getAmount()
     {
         return amount;
     }
-    public void setRemarks(String remarks) 
+    public void setRemarks(String remarks)
     {
         this.remarks = remarks;
     }
 
-    public String getRemarks() 
+    public String getRemarks()
     {
         return remarks;
     }
 
-
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("prescriptionid", getPrescriptionid())
-            .append("drugid", getDrugid())
-            .append("drugPrice", getDrugPrice())
-            .append("counts", getCounts())
-            .append("days", getDays())
-            .append("amount", getAmount())
-            .append("remarks", getRemarks())
-            .toString();
+                .append("prescriptionid", getPrescriptionid())
+                .append("drugid", getDrugid())
+                .append("drugName", getDrugName())
+                .append("drugType", getDrugType())
+                .append("drugSpecs", getDrugSpecs())
+                .append("drugPrice", getDrugPrice())
+                .append("counts", getCounts())
+                .append("days", getDays())
+                .append("amount", getAmount())
+                .append("remarks", getRemarks())
+                .toString();
     }
 }

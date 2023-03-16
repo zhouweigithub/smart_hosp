@@ -31,6 +31,9 @@
     <resultMap type="TPrescriptionDrugInfo" id="TPrescriptionDrugInfoResult">
         <result property="prescriptionid"    column="sub_prescriptionid"    />
         <result property="drugid"    column="sub_drugid"    />
+        <result property="drugName"    column="sub_drug_name"    />
+        <result property="drugType"    column="sub_drugType"    />
+        <result property="drugSpecs"    column="sub_drug_specs"    />
         <result property="drugPrice"    column="sub_drug_price"    />
         <result property="counts"    column="sub_counts"    />
         <result property="days"    column="sub_days"    />
@@ -57,16 +60,13 @@
             <if test="doctorid != null "> and doctorid = #{doctorid}</if>
             <if test="pharmacyid != null "> and pharmacyid = #{pharmacyid}</if>
             <if test="nurseid != null "> and nurseid = #{nurseid}</if>
-            <if test="zsAmount != null "> and zs_amount = #{zsAmount}</if>
-            <if test="drugAmount != null "> and drug_amount = #{drugAmount}</if>
-            <if test="totalAmount != null "> and total_amount = #{totalAmount}</if>
             <if test="crtime != null "> and crtime = #{crtime}</if>
         </where>
     </select>
 
     <select id="selectTPrescriptionRecordsById" parameterType="Long" resultMap="TPrescriptionRecordsTPrescriptionDrugInfoResult">
         select a.id, a.name, a.id_number, a.age, a.sex, a.address, a.phone, a.diagnosis, a.skin_test, a.status, a.doctorid, a.pharmacyid, a.nurseid, a.zs_amount, a.drug_amount, a.total_amount, a.crtime,
-               b.prescriptionid as sub_prescriptionid, b.drugid as sub_drugid, b.drug_price as sub_drug_price, b.counts as sub_counts, b.days as sub_days, b.amount as sub_amount, b.remarks as sub_remarks
+               b.prescriptionid as sub_prescriptionid, b.drugid as sub_drugid, b.drug_name as sub_drug_name, b.drugType as sub_drugType, b.drug_specs as sub_drug_specs, b.drug_price as sub_drug_price, b.counts as sub_counts, b.days as sub_days, b.amount as sub_amount, b.remarks as sub_remarks
         from t_prescription_records a
                  left join t_prescription_drug_info b on b.prescriptionid = a.id
         where a.id = #{id}
@@ -87,9 +87,9 @@
             <if test="doctorid != null">doctorid,</if>
             <if test="pharmacyid != null">pharmacyid,</if>
             <if test="nurseid != null">nurseid,</if>
-            <if test="zsAmount != null">zs_amount,</if>
-            <if test="drugAmount != null">drug_amount,</if>
-            <if test="totalAmount != null">total_amount,</if>
+            <if test="zsAmount != 0">zs_amount,</if>
+            <if test="drugAmount != 0">drug_amount,</if>
+            <if test="totalAmount != 0">total_amount,</if>
             <if test="crtime != null">crtime,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -158,9 +158,9 @@
     </delete>
 
     <insert id="batchTPrescriptionDrugInfo">
-        insert into t_prescription_drug_info( prescriptionid, drugid, drug_price, counts, days, amount, remarks) values
+        insert into t_prescription_drug_info( prescriptionid, drugid, drug_name, drugType, drug_specs, drug_price, counts, days, amount, remarks) values
         <foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.prescriptionid}, #{item.drugid}, #{item.drugPrice}, #{item.counts}, #{item.days}, #{item.amount}, #{item.remarks})
+            ( #{item.prescriptionid}, #{item.drugid}, #{item.drugName}, #{item.drugType}, #{item.drugSpecs}, #{item.drugPrice}, #{item.counts}, #{item.days}, #{item.amount}, #{item.remarks})
         </foreach>
     </insert>
 
