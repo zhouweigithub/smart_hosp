@@ -81,6 +81,7 @@ public class TPrescriptionRecordsController extends BaseController {
         }
         System.out.println("id:" + id);
         mmap.put("tPrescriptionRecords", tPrescriptionRecords);
+        mmap.put("mode", "add");
         return prefix + "/add";
     }
 
@@ -113,7 +114,8 @@ public class TPrescriptionRecordsController extends BaseController {
     public String edit(@PathVariable("id") Long id, ModelMap mmap) {
         TPrescriptionRecords tPrescriptionRecords = tPrescriptionRecordsService.selectTPrescriptionRecordsById(id);
         mmap.put("tPrescriptionRecords", tPrescriptionRecords);
-        return prefix + "/edit";
+        mmap.put("mode", "edit");
+        return prefix + "/add";
     }
 
     /**
@@ -136,5 +138,18 @@ public class TPrescriptionRecordsController extends BaseController {
     @ResponseBody
     public AjaxResult remove(String ids) {
         return toAjax(tPrescriptionRecordsService.deleteTPrescriptionRecordsByIds(ids));
+    }
+
+
+    /**
+     * 展示处方信息
+     */
+    @RequiresPermissions("system:records:detail")
+    @GetMapping("/detail/{id}")
+    public String detail(@PathVariable("id") Long id, ModelMap mmap) {
+        TPrescriptionRecords tPrescriptionRecords = tPrescriptionRecordsService.selectTPrescriptionRecordsById(id);
+        mmap.put("tPrescriptionRecords", tPrescriptionRecords);
+        mmap.put("mode", "detail");
+        return prefix + "/add";
     }
 }

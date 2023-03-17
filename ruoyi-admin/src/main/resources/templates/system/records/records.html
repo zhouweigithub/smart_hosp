@@ -43,7 +43,7 @@
         </div>
 
         <div class="btn-group-sm" id="toolbar" role="group">
-            <a class="btn btn-success" onclick="$.operate.add2('0',1300,700)" shiro:hasPermission="system:records:add">
+            <a class="btn btn-success" onclick="$.operate.add('0',1300,700)" shiro:hasPermission="system:records:add">
                 <i class="fa fa-plus"></i> 新建处方
             </a>
         </div>
@@ -57,6 +57,7 @@
 <script th:inline="javascript">
     var editFlag = [[${@permission.hasPermi('system:records:edit')}]];
     var removeFlag = [[${@permission.hasPermi('system:records:remove')}]];
+    var detailFlag = [[${@permission.hasPermi('system:records:detail')}]];
     var prefix = ctx + "system/records";
 
     $(function () {
@@ -66,6 +67,7 @@
             updateUrl: prefix + "/edit/{id}",
             removeUrl: prefix + "/remove",
             exportUrl: prefix + "/export",
+            detailUrl: prefix + "/detail/{id}",
             modalName: "处方信息",
             columns: [{
                 checkbox: true
@@ -103,8 +105,8 @@
                     align: 'center',
                     formatter: function (value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.add2(\'' + row.id + '\',1300,700)"><i class="fa fa-edit"></i>编辑</a> ');
-                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>详情</a>');
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\',1300,700)"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\',1300,700)"><i class="fa"></i>详情</a>');
                         return actions.join('');
                     }
                 }]

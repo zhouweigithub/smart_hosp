@@ -11,7 +11,7 @@
         }
 
         .scroll-pane {
-            max-height: 350px;
+            max-height: 310px;
             overflow-y: scroll;
             overflow-x: hidden;
         }
@@ -28,12 +28,13 @@
                         <div class="row">
                             <label class="col-sm-2 control-label is-required">姓名：</label>
                             <div class="col-sm-2">
-                                <input name="name" th:field="*{name}" class="form-control" type="text" required>
+                                <input name="name" th:field="*{name}" th:readonly="${mode}=='detail'"
+                                       class="form-control" type="text" required>
                             </div>
 
                             <label class="col-sm-2 control-label is-required">性别：</label>
                             <div class="col-sm-2">
-                                <select name="sex" id="sex" class="form-control"
+                                <select name="sex" id="sex" class="form-control" th:readonly="${mode}=='detail'"
                                         th:with="type=${@dict.getType('sys_user_sex')}" onchange="change()">
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
                                             th:value="${dict.dictValue}" th:field="*{sex}"></option>
@@ -41,35 +42,46 @@
                             </div>
                             <label class="col-sm-2 control-label is-required">年龄：</label>
                             <div class="col-sm-2">
-                                <input name="age" th:field="*{age}" id="age" class="form-control" type="text" required>
+                                <input name="age" th:field="*{age}" id="age" th:readonly="${mode}=='detail'"
+                                       class="form-control" type="text" required>
                             </div>
                         </div>
                         <div class="row">
                             <label class="col-sm-2 control-label is-required">电话：</label>
                             <div class="col-sm-3">
-                                <input name="phone" th:field="*{phone}" class="form-control" type="text" required>
+                                <input name="phone" th:field="*{phone}" th:readonly="${mode}=='detail'"
+                                       class="form-control" type="text" required>
                             </div>
 
                             <label class="col-sm-2 control-label">身份证号：</label>
                             <div class="col-sm-3">
-                                <input name="idNumber" th:field="*{idNumber}" class="form-control" type="text"
+                                <input name="idNumber" th:field="*{idNumber}" th:readonly="${mode}=='detail'"
+                                       class="form-control" type="text"
                                        onchange="idNumber_change()">
                             </div>
                         </div>
                         <div class="row">
                             <label class="col-sm-2 control-label">住址：</label>
                             <div class="col-sm-10">
-                                <input name="address" th:field="*{address}" class="form-control" type="text">
+                                <input name="address" th:field="*{address}" th:readonly="${mode}=='detail'"
+                                       class="form-control" type="text">
                             </div>
                         </div>
                         <div class="row">
                             <label class="col-sm-2 control-label">诊断：</label>
                             <div class="col-sm-10">
-                                <textarea name="diagnosis" class="form-control">[[*{diagnosis}]]</textarea>
+                                <textarea name="diagnosis" class="form-control" th:readonly="${mode}=='detail'">[[*{diagnosis}]]</textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-2 control-label">皮试结果：</label>
+                            <div class="col-sm-10">
+                                <input name="skinTest" th:field="*{skinTest}" th:readonly="${mode}=='detail'"
+                                       class="form-control" type="text">
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" th:if="${mode!='detail'}">
                         <div class="col-sm-5">
                             <input name="seach_keywords" id="seach_keywords" class="form-control" type="text"
                                    placeholder="请输入药品名或者别名">
@@ -89,7 +101,7 @@
                                 <div class="col-sm-12" id="fzsl-html"></div>
                                 <div class="col-sm-12" id="qt-html"></div>
 
-                                <div class="col-sm-3 pull-right">
+                                <div class="col-sm-3 pull-right" th:if="${mode!='detail'}">
                                     <div class="input-group">
                                         <input type="number" class="form-control" id="days" placeholder="用药天数">
                                         <span class="input-group-btn">
@@ -136,22 +148,24 @@
 </div>
 <th:block th:include="include :: footer"/>
 <th:block th:include="include :: datetimepicker-js"/>
-<script th:src="@{/ajax/libs/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.js}"></script>
-<script th:src="@{/ajax/libs/bootstrap-table/extensions/reorder-rows/jquery.tablednd.js}"></script>
+<script th:if="${mode!='detail'}"
+        th:src="@{/ajax/libs/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.js}"></script>
+<script th:if="${mode!='detail'}"
+        th:src="@{/ajax/libs/bootstrap-table/extensions/reorder-rows/jquery.tablednd.js}"></script>
 <script th:inline="javascript">
+    var prefix = ctx + "system/records"
+    // 是否为详情页面
+    var isDetail = [[${mode}]] == "detail";
+    // 禁用的属性内容
+    var readonlyStr = isDetail ? "readonly" : ""
     // 药品分类
     var drugTypes = [[${@dict.getType('sys_drug_type')}]];
-
-
-    var prefix = ctx + "system/records"
     $("#form-records-add").validate({
         focusCleanup: true
     });
 
     function submitHandler() {
         if ($.validate.form()) {
-            //console.log($('#form-records-add').serialize())
-
             let para = ""
             var id = document.getElementsByName("id")[0].value;
             if (id == "") {
@@ -165,18 +179,20 @@
             para += $.common.sprintf("&address=%s", encodeURI(document.getElementsByName("address")[0].value))
             para += $.common.sprintf("&diagnosis=%s", encodeURI(document.getElementsByName("diagnosis")[0].value))
             para += $.common.sprintf("&idNumber=%s", encodeURI(document.getElementsByName("idNumber")[0].value))
+            para += $.common.sprintf("&skinTest=%s", encodeURI(document.getElementsByName("skinTest")[0].value))
             para += $.common.sprintf("&zsAmount=%s", tmpSyf)
             para += $.common.sprintf("&drugAmount=%s", drug_amount)
             para += $.common.sprintf("&totalAmount=%s", total_amount)
 
             chufang_drugs.forEach((item, index) => {
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].prescriptionid=%s", index, id);
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].days=%s", index, item.days);
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].counts=%s", index, item.counts);
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].remarks=%s", index, encodeURI(item.remarks));
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugid=%s", index, item.drugid);
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugPrice=%s", index, item.drugPrice);
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].amount=%s", index, item.amount);
-                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugName=%s", index, item.drugName);
+                para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugName=%s", index, encodeURI(item.drugName));
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugType=%s", index, item.drugType);
                 para += $.common.sprintf("&tPrescriptionDrugInfoList[%s].drugSpecs=%s", index, item.drugSpecs);
             });
@@ -252,7 +268,9 @@
                 title: '用药数量',
                 width: 40,
                 formatter: function (value, row, index) {
-                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' name='tPrescriptionDrugInfoList[%s].counts' value='%s' onchange=\"cell_change(%s,'counts')\">", index, value, index);
+                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' %s name='tPrescriptionDrugInfoList[%s].counts' value='%s' onchange=\"cell_change(%s,'counts')\">", readonlyStr, index, value, index
+                    )
+                        ;
                 }
             },
             {
@@ -261,7 +279,7 @@
                 title: '用药天数',
                 width: 40,
                 formatter: function (value, row, index) {
-                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' name='tPrescriptionDrugInfoList[%s].days' value='%s' onchange=\"cell_change(%s,'days')\">", index, value, index);
+                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' %s name='tPrescriptionDrugInfoList[%s].days' value='%s' onchange=\"cell_change(%s,'days')\">", readonlyStr, index, value, index);
                 }
             },
             {
@@ -275,12 +293,13 @@
                 title: '备注',
                 width: 80,
                 formatter: function (value, row, index) {
-                    return $.common.sprintf("<input class='form-control' type='text' name='tPrescriptionDrugInfoList[%s].remarks' value='%s' onchange=\"cell_change(%s,'remarks')\">", index, value, index);
+                    return $.common.sprintf("<input class='form-control' type='text' %s name='tPrescriptionDrugInfoList[%s].remarks' value='%s' onchange=\"cell_change(%s,'remarks')\">", readonlyStr, index, value, index);
                 }
             },
             {
                 title: '操作',
                 align: 'center',
+                visible: !isDetail,
                 formatter: function (value, row, index) {
                     var value = $.common.isNotEmpty(row.index) ? row.index : $.table.serialNumber(index);
                     return '<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="removeRow(' + value + ')"><i class="fa fa-remove"></i>删除</a>';
@@ -303,9 +322,12 @@
                 title: '名称'
             },
             {
-                field: 'drugTypeStr',
+                field: 'drugType',
                 align: 'center',
-                title: '分类'
+                title: '分类',
+                formatter: function (value, row, index) {
+                    return $.table.selectDictLabel(drugTypes, value);
+                }
             },
             {
                 field: 'drugPrice',
