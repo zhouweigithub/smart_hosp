@@ -86,6 +86,43 @@ public class TPrescriptionRecords extends BaseEntity
     @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date crtime;
 
+
+    /** 医生姓名 */
+    @Excel(name = "医生姓名")
+    private String doctorName;
+
+    /** 医生姓名 */
+    @Excel(name = "药房姓名")
+    private String pharmacyName;
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
+
+    public String getPharmacyName() {
+        return pharmacyName;
+    }
+
+    public void setPharmacyName(String pharmacyName) {
+        this.pharmacyName = pharmacyName;
+    }
+
+    public String getNurseName() {
+        return nurseName;
+    }
+
+    public void setNurseName(String nurseName) {
+        this.nurseName = nurseName;
+    }
+
+    /** 医生姓名 */
+    @Excel(name = "护士姓名")
+    private String nurseName;
+
     /** 处方的药品信息信息 */
     private List<TPrescriptionDrugInfo> tPrescriptionDrugInfoList;
 

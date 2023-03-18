@@ -22,6 +22,9 @@
         <result property="drugAmount"    column="drug_amount"    />
         <result property="totalAmount"    column="total_amount"    />
         <result property="crtime"    column="crtime"    />
+        <result property="doctorName"    column="doctor_name"    />
+        <result property="pharmacyName"    column="pharmacy_name"    />
+        <result property="nurseName"    column="nurse_name"    />
     </resultMap>
 
     <resultMap id="TPrescriptionRecordsTPrescriptionDrugInfoResult" type="TPrescriptionRecords" extends="TPrescriptionRecordsResult">
@@ -66,9 +69,13 @@
 
     <select id="selectTPrescriptionRecordsById" parameterType="Long" resultMap="TPrescriptionRecordsTPrescriptionDrugInfoResult">
         select a.id, a.name, a.id_number, a.age, a.sex, a.address, a.phone, a.diagnosis, a.skin_test, a.status, a.doctorid, a.pharmacyid, a.nurseid, a.zs_amount, a.drug_amount, a.total_amount, a.crtime,
-               b.prescriptionid as sub_prescriptionid, b.drugid as sub_drugid, b.drug_name as sub_drug_name, b.drugType as sub_drugType, b.drug_specs as sub_drug_specs, b.drug_price as sub_drug_price, b.counts as sub_counts, b.days as sub_days, b.amount as sub_amount, b.remarks as sub_remarks
+               b.prescriptionid as sub_prescriptionid, b.drugid as sub_drugid, b.drug_name as sub_drug_name, b.drugType as sub_drugType, b.drug_specs as sub_drug_specs, b.drug_price as sub_drug_price, b.counts as sub_counts, b.days as sub_days, b.amount as sub_amount, b.remarks as sub_remarks,
+               c.user_name doctor_name,d.user_name pharmacy_name,e.user_name nurse_name
         from t_prescription_records a
                  left join t_prescription_drug_info b on b.prescriptionid = a.id
+                 left join sys_user c on a.doctorid = c.user_id
+                 left join sys_user d on a.pharmacyid = d.user_id
+                 left join sys_user e on a.nurseid = e.user_id
         where a.id = #{id}
     </select>
 

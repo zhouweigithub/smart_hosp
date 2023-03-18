@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
+import com.sun.javaws.IconUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -108,7 +109,7 @@ public class TPrescriptionRecordsController extends BaseController {
     public AjaxResult addSave(TPrescriptionRecords tPrescriptionRecords) {
         tPrescriptionRecords.setSkinTest("");
         tPrescriptionRecords.setCrtime(DateUtils.getNowDate());
-        tPrescriptionRecords.setStatus("0");
+        tPrescriptionRecords.setStatus("1");
         tPrescriptionRecords.setDoctorid(getSysUser().getUserId());
         return toAjax(tPrescriptionRecordsService.insertTPrescriptionRecords(tPrescriptionRecords));
     }
@@ -135,16 +136,22 @@ public class TPrescriptionRecordsController extends BaseController {
     @ResponseBody
     public AjaxResult editSave(TPrescriptionRecords tPrescriptionRecords) {
         SysUser user = getSysUser();
-        if (user.getDeptId() == 111) {
-            tPrescriptionRecords.setNurseid(user.getDeptId());
-            if (tPrescriptionRecords.getSkinTest().trim() == "") {
-                tPrescriptionRecords.setStatus("2");
+        if (user.getDeptId() == 110) {
+            // 医生操作完成
+            tPrescriptionRecords.setStatus("1");
+        } else if (user.getDeptId() == 111) {
+            // 护士操作完成
+            tPrescriptionRecords.setNurseid(user.getUserId());
+            System.out.println(tPrescriptionRecords.getSkinTest().trim());
+            if (tPrescriptionRecords.getSkinTest().trim().length() == 0) {
+                tPrescriptionRecords.setStatus("3");
             } else {
                 tPrescriptionRecords.setStatus("0");
             }
         } else if (user.getDeptId() == 112) {
-            tPrescriptionRecords.setPharmacyid(user.getDeptId());
-            tPrescriptionRecords.setStatus("1");
+            // 药房操作完成
+            tPrescriptionRecords.setPharmacyid(user.getUserId());
+            tPrescriptionRecords.setStatus("2");
         }
         return toAjax(tPrescriptionRecordsService.updateTPrescriptionRecords(tPrescriptionRecords));
     }

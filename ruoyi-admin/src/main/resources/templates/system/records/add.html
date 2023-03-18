@@ -144,7 +144,7 @@
                            data-reorderable-rows="true"></table>
                 </div>
             </div>
-            <div class="row  top-1-l" th:if="${mode=='detail'}">
+            <div class="row" th:if="${mode=='detail'}">
                 <div class="col-sm-8">
                     <div class="col-sm-2">操作人</div>
                     <div class="col-sm-2">医生</div>
@@ -152,12 +152,12 @@
                     <div class="col-sm-2">护士</div>
                 </div>
             </div>
-            <div class="row top-1-m" th:if="${mode=='detail'}">
+            <div class="row" th:if="${mode=='detail'}" th:object="${tPrescriptionRecords}">
                 <div class="col-sm-8">
                     <div class="col-sm-2"></div>
-                    <div class="col-sm-2">医生</div>
-                    <div class="col-sm-2">药房</div>
-                    <div class="col-sm-2">护士</div>
+                    <div class="col-sm-2">[[*{doctorName}]]</div>
+                    <div class="col-sm-2">[[*{pharmacyName}]]</div>
+                    <div class="col-sm-2">[[*{nurseName}]]</div>
                 </div>
             </div>
         </div>
