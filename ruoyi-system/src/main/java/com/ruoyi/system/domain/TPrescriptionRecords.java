@@ -53,7 +53,7 @@ public class TPrescriptionRecords extends BaseEntity
     @Excel(name = "皮试结果")
     private String skinTest;
 
-    /** 状态（未完结、已完结） */
+    /** 状态 0医生可见 1药房可见 2护士可见 3已完结 */
     @Excel(name = "状态", readConverterExp = "未=完结、已完结")
     private String status;
 

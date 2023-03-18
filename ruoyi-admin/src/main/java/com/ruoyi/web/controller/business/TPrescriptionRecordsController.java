@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,17 @@ public class TPrescriptionRecordsController extends BaseController {
     @ResponseBody
     public TableDataInfo list(TPrescriptionRecords tPrescriptionRecords) {
         startPage();
+        SysUser user = getSysUser();
+        if (user.getDeptId() == 110) {
+            // 医生
+            tPrescriptionRecords.setStatus("0");
+        } else if (user.getDeptId() == 112) {
+            // 药房
+            tPrescriptionRecords.setStatus("1");
+        } else if (user.getDeptId() == 111) {
+            // 护士
+            tPrescriptionRecords.setStatus("2");
+        }
         List<TPrescriptionRecords> list = tPrescriptionRecordsService.selectTPrescriptionRecordsList(tPrescriptionRecords);
         return getDataTable(list);
     }
@@ -82,6 +94,7 @@ public class TPrescriptionRecordsController extends BaseController {
         System.out.println("id:" + id);
         mmap.put("tPrescriptionRecords", tPrescriptionRecords);
         mmap.put("mode", "add");
+        mmap.put("deptid", getSysUser().getDeptId());
         return prefix + "/add";
     }
 
@@ -93,17 +106,11 @@ public class TPrescriptionRecordsController extends BaseController {
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(TPrescriptionRecords tPrescriptionRecords) {
-        if (tPrescriptionRecords.getId() == 0) {
-            // 新建处方
-            tPrescriptionRecords.setSkinTest("");
-            tPrescriptionRecords.setCrtime(DateUtils.getNowDate());
-            tPrescriptionRecords.setStatus("未完结");
-            tPrescriptionRecords.setDoctorid(getSysUser().getUserId());
-            return toAjax(tPrescriptionRecordsService.insertTPrescriptionRecords(tPrescriptionRecords));
-        } else {
-            // 修改处方
-            return toAjax(tPrescriptionRecordsService.updateTPrescriptionRecords(tPrescriptionRecords));
-        }
+        tPrescriptionRecords.setSkinTest("");
+        tPrescriptionRecords.setCrtime(DateUtils.getNowDate());
+        tPrescriptionRecords.setStatus("0");
+        tPrescriptionRecords.setDoctorid(getSysUser().getUserId());
+        return toAjax(tPrescriptionRecordsService.insertTPrescriptionRecords(tPrescriptionRecords));
     }
 
     /**
@@ -115,6 +122,7 @@ public class TPrescriptionRecordsController extends BaseController {
         TPrescriptionRecords tPrescriptionRecords = tPrescriptionRecordsService.selectTPrescriptionRecordsById(id);
         mmap.put("tPrescriptionRecords", tPrescriptionRecords);
         mmap.put("mode", "edit");
+        mmap.put("deptid", getSysUser().getDeptId());
         return prefix + "/add";
     }
 
@@ -126,6 +134,18 @@ public class TPrescriptionRecordsController extends BaseController {
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(TPrescriptionRecords tPrescriptionRecords) {
+        SysUser user = getSysUser();
+        if (user.getDeptId() == 111) {
+            tPrescriptionRecords.setNurseid(user.getDeptId());
+            if (tPrescriptionRecords.getSkinTest().trim() == "") {
+                tPrescriptionRecords.setStatus("2");
+            } else {
+                tPrescriptionRecords.setStatus("0");
+            }
+        } else if (user.getDeptId() == 112) {
+            tPrescriptionRecords.setPharmacyid(user.getDeptId());
+            tPrescriptionRecords.setStatus("1");
+        }
         return toAjax(tPrescriptionRecordsService.updateTPrescriptionRecords(tPrescriptionRecords));
     }
 
@@ -150,6 +170,7 @@ public class TPrescriptionRecordsController extends BaseController {
         TPrescriptionRecords tPrescriptionRecords = tPrescriptionRecordsService.selectTPrescriptionRecordsById(id);
         mmap.put("tPrescriptionRecords", tPrescriptionRecords);
         mmap.put("mode", "detail");
+        mmap.put("deptid", getSysUser().getDeptId());
         return prefix + "/add";
     }
 }

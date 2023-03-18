@@ -109,7 +109,6 @@ public class TDrugInfoController extends BaseController
         tDrugInfo.setUnitPrice(tDrugInfo.getUnitPrice().divide(new BigDecimal(100)));
         tDrugInfo.setRetailPrice(tDrugInfo.getRetailPrice().divide(new BigDecimal(100)));
         mmap.put("tDrugInfo", tDrugInfo);
-        System.out.println(tDrugInfo.getSort()+"************************");
         return prefix + "/edit";
     }
 
