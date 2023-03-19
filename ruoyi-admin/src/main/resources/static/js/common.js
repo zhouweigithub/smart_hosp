@@ -1,8 +1,8 @@
 $(function () {
-    $('input').keydown(function (event) {
+    $("input[search='search']").keydown(function (event) {
         if (event.keyCode == 13) {
             if (mysearch)
-                mysearch()
+                mysearch();
         }
     });
 })

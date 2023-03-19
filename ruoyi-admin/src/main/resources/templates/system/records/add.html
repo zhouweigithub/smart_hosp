@@ -8,10 +8,17 @@
             border: solid thin #ddd;
             text-align: center;
             padding: 10px;
+            margin: 5px 10px;
         }
 
-        .scroll-pane {
-            max-height: 310px;
+        .scroll-pane-top {
+            max-height: 65px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        .scroll-pane-bottom {
+            max-height: 425px;
             overflow-y: scroll;
             overflow-x: hidden;
         }
@@ -24,7 +31,7 @@
             <div class="col-sm-8">
                 <form class="form-horizontal m" id="form-records-add" th:object="${tPrescriptionRecords}">
                     <input name="id" th:field="*{id}" type="hidden">
-                    <div class="form-group">
+                    <div class="form-group scroll-pane-top">
                         <div class="row">
                             <label class="col-sm-2 control-label is-required">姓名：</label>
                             <div class="col-sm-2">
@@ -47,7 +54,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <label class="col-sm-2 control-label is-required">电话：</label>
+                            <label class="col-sm-2 control-label">电话：</label>
                             <div class="col-sm-3">
                                 <input name="phone" th:field="*{phone}" th:readonly="${mode}=='detail'"
                                        class="form-control" type="text" required>
@@ -85,33 +92,25 @@
                     <div class="row" th:if="${mode!='detail'}">
                         <div class="col-sm-5">
                             <input name="seach_keywords" id="seach_keywords" class="form-control" type="text"
-                                   placeholder="请输入药品名或者别名">
+                                   placeholder="请输入药品名或者别名" search="search">
                         </div>
                         <button type="button" class="btn btn-white btn-sm" onclick="search_drug()"><i
                                 class="fa fa-search">搜索</i>
                         </button>
+                        <a href="#cfxq" class="pull-right col-sm-1 btn btn-white btn-sm">处方详情</a>
                         <a href="#qt" class="pull-right col-sm-1 btn btn-white btn-sm">其他</a>
                         <a href="#fzsl" class="pull-right col-sm-1 btn btn-white btn-sm">非注射类</a>
                         <a href="#zsl" class="pull-right col-sm-1 btn btn-white btn-sm">注射类</a>
                     </div>
 
-                    <div class="scroll-pane">
+                    <div class="scroll-pane-bottom">
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="col-sm-12" id="zsl-html"></div>
                                 <div class="col-sm-12" id="fzsl-html"></div>
                                 <div class="col-sm-12" id="qt-html"></div>
-
-                                <div class="col-sm-3 pull-right" th:if="${mode!='detail'}">
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="days" placeholder="用药天数">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default" type="button" style="padding:5px 12px;"
-                                                    onclick="setAllDays()">Go!</button>
-                                        </span>
-                                    </div>
-                                </div>
                                 <div class="col-sm-12 select-table table-striped">
+                                    <a name="cfxq"></a>
                                     <table id="bootstrap-table" data-use-row-attr-func="true"
                                            data-reorderable-rows="true"></table>
                                 </div>
@@ -139,7 +138,16 @@
                 </form>
             </div>
             <div class="col-sm-4">
-                <div class="col-sm-12 select-table table-striped">
+                <div class="col-sm-6 pull-right" th:if="${mode!='detail'}">
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="days" placeholder="用药天数" evnt="changeDays">
+                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" style="padding:5px 12px;"
+                                                    onclick="setAllDays()">Go!</button>
+                                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-4 select-table table-striped">
                     <table id="bootstrap-table2" data-use-row-attr-func="true"
                            data-reorderable-rows="true"></table>
                 </div>
@@ -165,6 +173,7 @@
 </div>
 <th:block th:include="include :: footer"/>
 <th:block th:include="include :: datetimepicker-js"/>
+<script th:src="@{/js/common.js}"></script>
 <script th:if="${mode!='detail'}"
         th:src="@{/ajax/libs/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.js}"></script>
 <script th:if="${mode!='detail'}"
@@ -346,23 +355,31 @@
                 title: '名称'
             },
             {
-                field: 'drugType',
-                align: 'center',
-                title: '分类',
-                formatter: function (value, row, index) {
-                    return $.table.selectDictLabel(drugTypes, value);
-                }
-            },
-            {
-                field: 'drugPrice',
-                align: 'center',
-                title: '零售价'
-            },
-            {
                 field: 'drugSpecs',
                 align: 'center',
                 title: '规格'
             },
+            {
+                field: 'counts',
+                align: 'center',
+                title: '用药数量',
+                width: 40,
+                formatter: function (value, row, index) {
+                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' %s name='tPrescriptionDrugInfoList[%s].counts' value='%s' onchange=\"cell_change(%s,'counts')\">", readonlyStr, index, value, index
+                    )
+                        ;
+                }
+            },
+            {
+                field: 'days',
+                align: 'center',
+                title: '用药天数',
+                width: 40,
+                formatter: function (value, row, index) {
+                    return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' %s name='tPrescriptionDrugInfoList[%s].days' value='%s' onchange=\"cell_change(%s,'days')\">", readonlyStr, index, value, index);
+                }
+            },
+
         ],
     };
 
@@ -374,6 +391,12 @@
         var syfDic = [[${@dict.getType('business_syf')}]];
         syf = Number(syfDic[0].dictValue);
         updateZje();
+
+        $("input[evnt='changeDays']").keydown(function (event) {
+            if (event.keyCode == 13) {
+                setAllDays();
+            }
+        });
     });
 
     function refresh_tabledata() {
@@ -424,11 +447,10 @@
                         if (item.drugName.length > 6) {
                             nameLimit6 = item.drugName.substring(0, 6) + "...";
                         }
-                        html += `<div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                        html += `<div class="col-sm-2 drug-item mt3-l" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
-                        </div>
-                        <div class="col-sm-1"></div>`
+                        </div>`
                     })
                 }
                 $("#zsl-html").html(html)
@@ -445,8 +467,7 @@
                         html += `<div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
-                        </div>
-                        <div class="col-sm-1"></div>`
+                        </div>`
                     })
                 }
                 $("#fzsl-html").html(html)
@@ -462,8 +483,7 @@
                         html += `<div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
-                        </div>
-                        <div class="col-sm-1"></div>`
+                        </div>`
                     })
                 }
                 $("#qt-html").html(html)
@@ -574,6 +594,11 @@
             item.days = day;
         })
         refresh_tabledata();
+    }
+
+
+    function mysearch(){
+        search_drug();
     }
 </script>
 </body>

@@ -11,10 +11,10 @@
 					<div class="select-list">
 						<ul>
 							<li>
-								公告标题：<input type="text" name="noticeTitle"/>
+								公告标题：<input type="text" name="noticeTitle" search="search"/>
 							</li>
 							<li>
-								操作人员：<input type="text" name="createBy"/>
+								操作人员：<input type="text" name="createBy" search="search"/>
 							</li>
 							<li>
 								公告类型：<select name="noticeType" th:with="type=${@dict.getType('sys_notice_type')}">

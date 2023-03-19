@@ -25,11 +25,11 @@
                             </select></li>
                         <li>
                             <label>姓名：</label>
-                            <input type="text" name="name"/>
+                            <input type="text" name="name" search="search"/>
                         </li>
                         <li>
                             <label>身份证号：</label>
-                            <input type="text" name="idNumber"/>
+                            <input type="text" name="idNumber" search="search"/>
                         </li>
                         <li>
                             <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
@@ -59,6 +59,10 @@
     var removeFlag = [[${@permission.hasPermi('system:records:remove')}]];
     var detailFlag = [[${@permission.hasPermi('system:records:detail')}]];
     var prefix = ctx + "system/records";
+    var statusDic = [{"dictLabel": "未完成", "dictValue": "0"}, {
+        "dictLabel": "未完成",
+        "dictValue": "1"
+    }, {"dictLabel": "未完成", "dictValue": "2"}, {"dictLabel": "已完成", "dictValue": "3"},]
 
     $(function () {
         var options = {
@@ -101,6 +105,13 @@
                     title: '皮试'
                 },
                 {
+                    field: 'status',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(statusDic, value);
+                    }
+                },
+                {
                     title: '操作',
                     align: 'center',
                     formatter: function (value, row, index) {
@@ -112,11 +123,11 @@
                 }]
         };
         $.table.init(options);
-
-        function mysearch() {
-            $.table.search()
-        }
     });
+
+    function mysearch() {
+        $.table.search()
+    }
 </script>
 </body>
 </html>

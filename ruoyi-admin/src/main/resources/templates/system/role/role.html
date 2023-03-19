@@ -11,10 +11,10 @@
 					<div class="select-list">
 						<ul>
 							<li>
-								角色名称：<input type="text" name="roleName"/>
+								角色名称：<input type="text" name="roleName" search="search"/>
 							</li>
 							<li>
-								权限字符：<input type="text" name="roleKey"/>
+								权限字符：<input type="text" name="roleKey" search="search"/>
 							</li>
 							<li>
 								角色状态：<select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">

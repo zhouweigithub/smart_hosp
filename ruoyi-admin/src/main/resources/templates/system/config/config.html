@@ -11,10 +11,10 @@
 					<div class="select-list">
 						<ul>
 							<li>
-								参数名称：<input type="text" name="configName"/>
+								参数名称：<input type="text" name="configName" search="search"/>
 							</li>
 							<li>
-								参数键名：<input type="text" name="configKey"/>
+								参数键名：<input type="text" name="configKey" search="search"/>
 							</li>
 							<li>
 								系统内置：<select name="configType" th:with="type=${@dict.getType('sys_yes_no')}">

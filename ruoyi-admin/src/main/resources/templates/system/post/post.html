@@ -11,10 +11,10 @@
 					<div class="select-list">
 						<ul>
 							<li>
-								岗位编码：<input type="text" name="postCode"/>
+								岗位编码：<input type="text" name="postCode" search="search"/>
 							</li>
 							<li>
-								岗位名称：<input type="text" name="postName"/>
+								岗位名称：<input type="text" name="postName" search="search"/>
 							</li>
 							<li>
 								岗位状态：<select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
