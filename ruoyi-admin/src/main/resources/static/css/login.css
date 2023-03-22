@@ -92,6 +92,7 @@ body.signin {
     padding: 0 15px 0 25px;
     margin-bottom: 7px;
     display: inline-block;
+	margin-top: 10px;
 }
 /*
 将初始的checkbox的样式改变

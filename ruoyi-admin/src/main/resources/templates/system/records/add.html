@@ -12,15 +12,23 @@
         }
 
         .scroll-pane-top {
-            max-height: 65px;
+            /*max-height: 65px;*/
+            /*overflow-y: scroll;*/
+            /*overflow-x: hidden;*/
+        }
+
+        #scroll-pane-bottom {
+            /*max-height: 425px;*/
             overflow-y: scroll;
             overflow-x: hidden;
         }
 
-        .scroll-pane-bottom {
-            max-height: 425px;
-            overflow-y: scroll;
-            overflow-x: hidden;
+        .patient-info {
+            margin: 5px 0px;
+        }
+
+        .hand {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -32,7 +40,7 @@
                 <form class="form-horizontal m" id="form-records-add" th:object="${tPrescriptionRecords}">
                     <input name="id" th:field="*{id}" type="hidden">
                     <div class="form-group scroll-pane-top">
-                        <div class="row">
+                        <div class="row patient-info">
                             <label class="col-sm-2 control-label is-required">姓名：</label>
                             <div class="col-sm-2">
                                 <input name="name" th:field="*{name}" th:readonly="${mode}=='detail'"
@@ -50,10 +58,10 @@
                             <label class="col-sm-2 control-label is-required">年龄：</label>
                             <div class="col-sm-2">
                                 <input name="age" th:field="*{age}" id="age" th:readonly="${mode}=='detail'"
-                                       class="form-control" type="text" required>
+                                       class="form-control" type="number" required>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row patient-info">
                             <label class="col-sm-2 control-label">电话：</label>
                             <div class="col-sm-3">
                                 <input name="phone" th:field="*{phone}" th:readonly="${mode}=='detail'"
@@ -67,20 +75,20 @@
                                        onchange="idNumber_change()">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row patient-info">
                             <label class="col-sm-2 control-label">住址：</label>
                             <div class="col-sm-10">
                                 <input name="address" th:field="*{address}" th:readonly="${mode}=='detail'"
                                        class="form-control" type="text">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row patient-info">
                             <label class="col-sm-2 control-label">诊断：</label>
                             <div class="col-sm-10">
                                 <textarea name="diagnosis" class="form-control" th:readonly="${mode}=='detail'">[[*{diagnosis}]]</textarea>
                             </div>
                         </div>
-                        <div class="row" th:if="${deptid==111 or mode !='add'}">
+                        <div class="row patient-info" th:if="${deptid==111 or mode !='add'}">
                             <label class="col-sm-2 control-label">皮试结果：</label>
                             <div class="col-sm-10">
                                 <input name="skinTest" th:field="*{skinTest}"
@@ -103,7 +111,7 @@
                         <a href="#zsl" class="pull-right col-sm-1 btn btn-white btn-sm">注射类</a>
                     </div>
 
-                    <div class="scroll-pane-bottom">
+                    <div id="scroll-pane-bottom">
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="col-sm-12" id="zsl-html"></div>
@@ -397,6 +405,16 @@
                 setAllDays();
             }
         });
+
+        if (mode == "add" || mode == "edit")
+            search_drug();
+
+        if (mode == "add")
+            $("#scroll-pane-bottom").css("max-height", (window.screen.availHeight - 484) + "px");
+        else if (mode == "edit")
+            $("#scroll-pane-bottom").css("max-height", (window.screen.availHeight - 514) + "px");
+        else if (mode == "detail")
+            $("#scroll-pane-bottom").css("max-height", (window.screen.availHeight - 524) + "px");
     });
 
     function refresh_tabledata() {
@@ -414,9 +432,9 @@
         $("#fzsl-html").html("");
         $("#qt-html").html("");
         var keywords = $("#seach_keywords").val().trim();
-        if (keywords == "") {
-            return
-        }
+        // if (keywords == "") {
+        //     return
+        // }
 
         $.ajax({
             url: '/business/drugInfo/list',
@@ -447,7 +465,7 @@
                         if (item.drugName.length > 6) {
                             nameLimit6 = item.drugName.substring(0, 6) + "...";
                         }
-                        html += `<div class="col-sm-2 drug-item mt3-l" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                        html += `<div class="col-sm-2 drug-item mt3-l hand" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
                         </div>`
@@ -464,7 +482,7 @@
                         if (item.drugName.length > 6) {
                             nameLimit6 = item.drugName.substring(0, 6) + "...";
                         }
-                        html += `<div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                        html += `<div class="col-sm-2 drug-item hand" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
                         </div>`
@@ -480,7 +498,7 @@
                         if (item.drugName.length > 6) {
                             nameLimit6 = item.drugName.substring(0, 6) + "...";
                         }
-                        html += `<div class="col-sm-2 drug-item" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                        html += `<div class="col-sm-2 drug-item hand" onclick="drug_click('${item.id}')" title="${item.drugName}"
                              data-toggle="tooltip" data-placement="top">
                             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
                         </div>`
@@ -597,7 +615,7 @@
     }
 
 
-    function mysearch(){
+    function mysearch() {
         search_drug();
     }
 </script>

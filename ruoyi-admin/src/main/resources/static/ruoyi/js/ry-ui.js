@@ -1070,6 +1070,21 @@ var table = {
                 };
                 $.modal.openOptions(options);
             },
+            detailFull: function (id) {
+                table.set();
+                var _url = $.operate.detailUrl(id);
+                var options = {
+                    title: table.options.modalName + "详细",
+                    url: _url,
+                    full:true,
+                    skin: 'layui-layer-gray',
+                    btn: ['关闭'],
+                    yes: function (index, layero) {
+                        $.modal.close(index);
+                    }
+                };
+                $.modal.openOptions(options);
+            },
             // 详细信息，以tab页展现
             detailTab: function (id) {
                 table.set();
