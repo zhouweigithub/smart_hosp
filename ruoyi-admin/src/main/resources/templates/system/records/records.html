@@ -58,11 +58,12 @@
     var editFlag = [[${@permission.hasPermi('system:records:edit')}]];
     var removeFlag = [[${@permission.hasPermi('system:records:remove')}]];
     var detailFlag = [[${@permission.hasPermi('system:records:detail')}]];
+    var sexDic = [[${@dict.getType('sys_user_sex')}]];
     var prefix = ctx + "system/records";
-    var statusDic = [{"dictLabel": "未完成", "dictValue": "0"}, {
-        "dictLabel": "未完成",
-        "dictValue": "1"
-    }, {"dictLabel": "未完成", "dictValue": "2"}, {"dictLabel": "已完成", "dictValue": "3"},]
+    var statusDic = [{"dictLabel": "未完成", "dictValue": "0"},
+        {"dictLabel": "未完成", "dictValue": "1"},
+        {"dictLabel": "未完成", "dictValue": "2"},
+        {"dictLabel": "已完成", "dictValue": "3"},]
 
     $(function () {
         var options = {
@@ -86,34 +87,31 @@
                     title: '姓名'
                 },
                 {
-                    field: 'idNumber',
-                    title: '身份证号'
-                },
-                {
-                    field: 'diagnosis',
-                    title: '诊断'
-                }, {
-                    field: 'address',
-                    title: '住址'
-                },
-                {
-                    field: 'phone',
-                    title: '电话'
-                },
-                {
-                    field: 'skinTest',
-                    title: '皮试'
-                },
-                {
-                    field: 'status',
-                    title: '状态',
+                    field: 'sex',
+                    title: '性别',
                     formatter: function (value, row, index) {
-                        return $.table.selectDictLabel(statusDic, value);
+                        return $.table.selectDictLabel(sexDic, value);
                     }
                 },
                 {
+                    field: 'age',
+                    title: '年龄'
+                },
+                {
+                    field: 'skinTest',
+                    title: '皮试结果'
+                },
+                // {
+                //     field: 'status',
+                //     title: '状态',
+                //     formatter: function (value, row, index) {
+                //         return $.table.selectDictLabel(statusDic, value);
+                //     }
+                // },
+                {
                     field: 'crtime',
-                    title: '创建时间'
+                    title: '创建时间',
+                    sortable: true ,
                 },
                 {
                     title: '操作',
