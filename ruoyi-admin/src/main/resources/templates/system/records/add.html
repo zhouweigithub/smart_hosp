@@ -29,6 +29,10 @@
         .hand {
             cursor: pointer;
         }
+
+        .nostock {
+            background-color: #f0e6e6;
+        }
     </style>
 </head>
 <body class="white-bg">
@@ -72,7 +76,7 @@
                             <label class="col-sm-2 control-label">电话：</label>
                             <div class="col-sm-3">
                                 <input name="phone" th:field="*{phone}" th:readonly="${mode}=='detail'"
-                                       class="form-control" type="text" required>
+                                       class="form-control" type="text">
                             </div>
 
                             <label class="col-sm-2 control-label">身份证号：</label>
@@ -112,10 +116,12 @@
                         <button type="button" class="btn btn-white btn-sm" onclick="search_drug()"><i
                                 class="fa fa-search">搜索</i>
                         </button>
+                        <a class="btn btn-white btn-sm" onclick="search_reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+
                         <a href="#cfxq" class="pull-right col-sm-1 btn btn-white btn-sm">处方详情</a>
-                        <a href="#qt" class="pull-right col-sm-1 btn btn-white btn-sm">其他</a>
-                        <a href="#fzsl" class="pull-right col-sm-1 btn btn-white btn-sm">非注射类</a>
-                        <a href="#zsl" class="pull-right col-sm-1 btn btn-white btn-sm">注射类</a>
+                        <a href="#business_qt" class="pull-right col-sm-1 btn btn-white btn-sm">其他</a>
+                        <a href="#business_fzsl" class="pull-right col-sm-1 btn btn-white btn-sm">非注射类</a>
+                        <a href="#business_zsl" class="pull-right col-sm-1 btn btn-white btn-sm">注射类</a>
                     </div>
 
                     <div id="scroll-pane-bottom">
@@ -206,6 +212,13 @@
     var readonlyStr = isDetail ? "readonly" : ""
     // 药品分类
     var drugTypes = [[${@dict.getType('sys_drug_type')}]];
+    // 注射类的子类
+    var business_zsl = [[${@dict.getType('business_zsl')}]];
+    // 非注射类的子类
+    var business_fzsl = [[${@dict.getType('business_fzsl')}]];
+    // 其他类的子类
+    var business_qt = [[${@dict.getType('business_qt')}]];
+
     $("#form-records-add").validate({
         focusCleanup: true
     });
@@ -397,7 +410,15 @@
                     return $.common.sprintf("<input class='form-control' type='number' min='0' max='9999' step='1' %s name='tPrescriptionDrugInfoList[%s].days' value='%s' onchange=\"cell_change(%s,'days')\">", readonlyStr, index, value, index);
                 }
             },
-
+            {
+                title: '操作',
+                align: 'center',
+                visible: !isDetail,
+                formatter: function (value, row, index) {
+                    var value = $.common.isNotEmpty(row.index) ? row.index : $.table.serialNumber(index);
+                    return '<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="removeRow(' + value + ')"><i class="fa fa-remove"></i>删除</a>';
+                }
+            }
         ],
     };
 
@@ -461,60 +482,94 @@
                 // 一旦设置的 dataType 选项，就不再关心 服务端 响应的 Content-Type 了
                 // 客户端会主观认为服务端返回的就是 JSON 格式的字符串
 
-                drugList = res.rows;
+                for (let i = 0; i < res.length; i++) {
+                    res[i].drugPrice = res[i].drugPrice / 100
+                }
 
-                let zhushelei = res.rows.filter(a => a.drugType == "business_zsl")
-                let fzhushelei = res.rows.filter(a => a.drugType == "business_fzsl")
-                let qita = res.rows.filter(a => a.drugType == "business_qt")
-                var html = "";
-                if (zhushelei.length > 0) {
-                    html = "<h3>注射类<a href=\"\" name=\"zsl\"></a></h3>";
-                    zhushelei.forEach(item => {
-                        item.drugTypeStr = "注射类";
-                        let nameLimit6 = item.drugName
-                        if (item.drugName.length > 6) {
-                            nameLimit6 = item.drugName.substring(0, 6) + "...";
-                        }
-                        html += `<div class="col-sm-2 drug-item mt3-l hand" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                drugList = res.rows;
+debugger
+                let html = "";
+                for (let i = 0; i < drugTypes.length; i++) {
+                    // 药品类型（注射类/非注射类/其他）
+                    let drugTypeInfo = drugTypes[i];
+                    // 药品类型下的所有药品
+                    let drugTypeDrugs = res.rows.filter(a => a.drugType == drugTypeInfo.dictValue)
+                    if (drugTypeDrugs.length > 0) {
+                        html += `<div class="col-sm-12"><h3>${drugTypeInfo.dictLabel}<a href=\"\" name=\"${drugTypeInfo.dictValue}\"></a></h3></div>`;
+
+                        // 药品子类（抗生素注射液/抗菌消炎药等）
+                        var drugCategoryList = [];
+                        if (drugTypeInfo.dictValue == "business_zsl")
+                            drugCategoryList = business_zsl;
+                        else if (drugTypeInfo.dictValue == "business_fzsl")
+                            drugCategoryList = business_fzsl;
+                        else
+                            drugCategoryList = business_qt;
+
+                        drugCategoryList.forEach(category => {
+                            // 子类中的所有药品
+                            var drugItems = drugTypeDrugs.filter(a => a.drugCategory == category.dictValue)
+                            if (drugItems.length > 0) {
+                                html += `<div class="col-sm-12"><h4>${category.dictLabel}<a href=\"\" name=\"${category.dictValue}\"></a></h4></div>`;
+                                drugItems.forEach(drug => {
+                                    drug.drugTypeStr = drugTypeInfo.dictLabel;
+                                    drug.drugCategoryStr = category.dictLabel
+                                    let nameLimit6 = drug.drugName
+                                    if (drug.drugName.length > 6) {
+                                        nameLimit6 = drug.drugName.substring(0, 6) + "...";
+                                    }
+                                    //点击事件，添加药品到处方
+                                    let onclick = ""
+                                    //无库存的样式
+                                    let nostockcss = ""
+                                    if (drug.stock > 0) {
+                                        onclick = `onclick="drug_click('${drug.id}')"`
+                                    } else {
+                                        nostockcss = "nostock"
+                                    }
+                                    html += `<div class="col-sm-2 drug-item mt3-l hand ${nostockcss}" ${onclick} title="${drug.drugName}"
                              data-toggle="tooltip" data-placement="top">
-                            <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
+                            <span>${nameLimit6}</span><br/><span>${drug.drugSpecs}</span>
                         </div>`
-                    })
+                                })
+                            }
+                        })
+                    }
                 }
                 $("#zsl-html").html(html)
 
-                html = "";
-                if (fzhushelei.length > 0) {
-                    html = "<h3>非注射类<a href=\"\" name=\"fzsl\"></a></h3>";
-                    fzhushelei.forEach(item => {
-                        item.drugTypeStr = "非注射类";
-                        let nameLimit6 = item.drugName
-                        if (item.drugName.length > 6) {
-                            nameLimit6 = item.drugName.substring(0, 6) + "...";
-                        }
-                        html += `<div class="col-sm-2 drug-item hand" onclick="drug_click('${item.id}')" title="${item.drugName}"
-                             data-toggle="tooltip" data-placement="top">
-                            <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
-                        </div>`
-                    })
-                }
-                $("#fzsl-html").html(html)
-                html = "";
-                if (qita.length > 0) {
-                    html = "<h3>其他<a href=\"\" name=\"qt\"></a></h3>";
-                    qita.forEach(item => {
-                        item.drugTypeStr = "其他";
-                        let nameLimit6 = item.drugName
-                        if (item.drugName.length > 6) {
-                            nameLimit6 = item.drugName.substring(0, 6) + "...";
-                        }
-                        html += `<div class="col-sm-2 drug-item hand" onclick="drug_click('${item.id}')" title="${item.drugName}"
-                             data-toggle="tooltip" data-placement="top">
-                            <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
-                        </div>`
-                    })
-                }
-                $("#qt-html").html(html)
+                // html = "";
+                // if (fzhushelei.length > 0) {
+                //     html = "<h3>非注射类<a href=\"\" name=\"fzsl\"></a></h3>";
+                //     fzhushelei.forEach(item => {
+                //         item.drugTypeStr = "非注射类";
+                //         let nameLimit6 = item.drugName
+                //         if (item.drugName.length > 6) {
+                //             nameLimit6 = item.drugName.substring(0, 6) + "...";
+                //         }
+                //         html += `<div class="col-sm-2 drug-item hand" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                //              data-toggle="tooltip" data-placement="top">
+                //             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
+                //         </div>`
+                //     })
+                // }
+                // $("#fzsl-html").html(html)
+                // html = "";
+                // if (qita.length > 0) {
+                //     html = "<h3>其他<a href=\"\" name=\"qt\"></a></h3>";
+                //     qita.forEach(item => {
+                //         item.drugTypeStr = "其他";
+                //         let nameLimit6 = item.drugName
+                //         if (item.drugName.length > 6) {
+                //             nameLimit6 = item.drugName.substring(0, 6) + "...";
+                //         }
+                //         html += `<div class="col-sm-2 drug-item hand" onclick="drug_click('${item.id}')" title="${item.drugName}"
+                //              data-toggle="tooltip" data-placement="top">
+                //             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
+                //         </div>`
+                //     })
+                // }
+                // $("#qt-html").html(html)
                 $("[data-toggle='tooltip']").tooltip();
             }
         });
@@ -628,6 +683,10 @@
 
     function mysearch() {
         search_drug();
+    }
+
+    function search_reset() {
+        $("#seach_keywords").val("");
     }
 </script>
 </body>

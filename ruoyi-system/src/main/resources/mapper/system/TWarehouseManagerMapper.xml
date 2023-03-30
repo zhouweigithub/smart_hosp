@@ -41,9 +41,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="insertNum != null "> and twm.insert_num = #{insertNum}</if>
             <if test="residueNum != null "> and twm.residue_num = #{residueNum}</if>
             <if test="residueNum != null "> and twm.residue_num = #{residueNum}</if>
-            <if test="beginTime != null  and beginTime != '' and endTime != null  and endTime != ''"> and twm.expiration_time between #{beginTime} and #{endTime}</if>
+            <if test="beginTime != null  and beginTime != '' and endTime != null  and endTime != ''"> and twm.create_time between #{beginTime} and #{endTime}</if>
         </where>
-        order by twm.expiration_time
+        order by twm.create_time desc
     </select>
     
     <select id="selectTWarehouseManagerById" parameterType="java.lang.String" resultMap="TWarehouseManagerResult">
