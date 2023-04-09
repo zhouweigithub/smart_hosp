@@ -66,6 +66,18 @@ public class TDrugInfoServiceImpl implements ITDrugInfoService
     }
 
     /**
+     * 根据药品名称查询药品信息
+     *
+     * @param drugName 药品信息
+     * @return 药品信息
+     */
+    @Override
+    public TDrugInfo selectTDrugInfo(String drugName)
+    {
+        return tDrugInfoMapper.selectTDrugInfoByName(drugName);
+    }
+
+    /**
      * 新增药品信息
      * 
      * @param tDrugInfo 药品信息

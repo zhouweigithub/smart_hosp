@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.TDrugInfo;
+import com.ruoyi.system.service.ITDrugInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,9 @@ public class TPrescriptionRecordsController extends BaseController {
 
     @Autowired
     private ITPrescriptionRecordsService tPrescriptionRecordsService;
+
+    @Autowired
+    private ITDrugInfoService tDrugInfoService;
 
     @RequiresPermissions("system:records:view")
     @GetMapping()
@@ -88,12 +93,16 @@ public class TPrescriptionRecordsController extends BaseController {
         TPrescriptionRecords tPrescriptionRecords;
         if (id > 0) {
             tPrescriptionRecords = tPrescriptionRecordsService.selectTPrescriptionRecordsById(id);
+            mmap.put("mode", "edit");
         } else {
             tPrescriptionRecords = new TPrescriptionRecords();
+            mmap.put("mode", "add");
         }
         System.out.println("id:" + id);
+        // 输液费
+        TDrugInfo tDrugInfo = tDrugInfoService.selectTDrugInfo("输液费");
+        mmap.put("syf", tDrugInfo);
         mmap.put("tPrescriptionRecords", tPrescriptionRecords);
-        mmap.put("mode", "add");
         mmap.put("deptid", getSysUser().getDeptId());
         return prefix + "/add";
     }
@@ -113,18 +122,18 @@ public class TPrescriptionRecordsController extends BaseController {
         return toAjax(tPrescriptionRecordsService.insertTPrescriptionRecords(tPrescriptionRecords));
     }
 
-    /**
-     * 修改处方信息
-     */
-    @RequiresPermissions("system:records:edit")
-    @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Long id, ModelMap mmap) {
-        TPrescriptionRecords tPrescriptionRecords = tPrescriptionRecordsService.selectTPrescriptionRecordsById(id);
-        mmap.put("tPrescriptionRecords", tPrescriptionRecords);
-        mmap.put("mode", "edit");
-        mmap.put("deptid", getSysUser().getDeptId());
-        return prefix + "/add";
-    }
+//    /**
+//     * 修改处方信息
+//     */
+//    @RequiresPermissions("system:records:edit")
+//    @GetMapping("/edit/{id}")
+//    public String edit(@PathVariable("id") Long id, ModelMap mmap) {
+//        TPrescriptionRecords tPrescriptionRecords = tPrescriptionRecordsService.selectTPrescriptionRecordsById(id);
+//        mmap.put("tPrescriptionRecords", tPrescriptionRecords);
+//        mmap.put("mode", "edit");
+//        mmap.put("deptid", getSysUser().getDeptId());
+//        return prefix + "/add";
+//    }
 
     /**
      * 修改保存处方信息
@@ -174,6 +183,8 @@ public class TPrescriptionRecordsController extends BaseController {
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Long id, ModelMap mmap) {
         TPrescriptionRecords tPrescriptionRecords = tPrescriptionRecordsService.selectTPrescriptionRecordsById(id);
+        TDrugInfo tDrugInfo = tDrugInfoService.selectTDrugInfo("输液费");
+        mmap.put("syf", tDrugInfo);
         mmap.put("tPrescriptionRecords", tPrescriptionRecords);
         mmap.put("mode", "detail");
         mmap.put("deptid", getSysUser().getDeptId());

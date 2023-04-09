@@ -51,7 +51,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTDrugInfoVo"/>
         where id = #{id}
     </select>
-        
+
+    <select id="selectTDrugInfoByName" parameterType="java.lang.String" resultMap="TDrugInfoResult">
+        <include refid="selectTDrugInfoVo"/>
+        where drug_name = #{drugName}
+    </select>
+
     <insert id="insertTDrugInfo" parameterType="com.ruoyi.system.domain.TDrugInfo">
         insert into t_drug_info
         <trim prefix="(" suffix=")" suffixOverrides=",">

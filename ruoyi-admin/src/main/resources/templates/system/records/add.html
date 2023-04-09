@@ -423,13 +423,18 @@
     };
 
     $(function () {
+        // getSYF()
         $.table.init(options);
         $.table.init(options2);
         refresh_tabledata();
         // 获取数据字典内容
-        var syfDic = [[${@dict.getType('business_syf')}]];
-        syf = Number(syfDic[0].dictValue);
-        updateZje();
+        let syfInfo = [[${syf}]];
+        if (syfInfo == null) {
+            $.modal.alertError('获取输液费失败')
+        } else {
+            syf = syfInfo.retailPrice / 100;
+        }
+        updateZje()
 
         $("input[evnt='changeDays']").keydown(function (event) {
             if (event.keyCode == 13) {
@@ -447,6 +452,7 @@
         else if (mode == "detail")
             $("#scroll-pane-bottom").css("max-height", (window.screen.availHeight - 374) + "px");
     });
+
 
     function refresh_tabledata() {
         console.log(chufang_drugs)
@@ -486,14 +492,17 @@
                     res[i].drugPrice = res[i].drugPrice / 100
                 }
 
+                res.rows.forEach(item=>{
+                    item.retailPrice=item.retailPrice/100
+                })
                 drugList = res.rows;
-debugger
+
                 let html = "";
                 for (let i = 0; i < drugTypes.length; i++) {
                     // 药品类型（注射类/非注射类/其他）
                     let drugTypeInfo = drugTypes[i];
                     // 药品类型下的所有药品
-                    let drugTypeDrugs = res.rows.filter(a => a.drugType == drugTypeInfo.dictValue)
+                    let drugTypeDrugs = drugList.filter(a => a.drugType == drugTypeInfo.dictValue)
                     if (drugTypeDrugs.length > 0) {
                         html += `<div class="col-sm-12"><h3>${drugTypeInfo.dictLabel}<a href=\"\" name=\"${drugTypeInfo.dictValue}\"></a></h3></div>`;
 
@@ -537,39 +546,6 @@ debugger
                     }
                 }
                 $("#zsl-html").html(html)
-
-                // html = "";
-                // if (fzhushelei.length > 0) {
-                //     html = "<h3>非注射类<a href=\"\" name=\"fzsl\"></a></h3>";
-                //     fzhushelei.forEach(item => {
-                //         item.drugTypeStr = "非注射类";
-                //         let nameLimit6 = item.drugName
-                //         if (item.drugName.length > 6) {
-                //             nameLimit6 = item.drugName.substring(0, 6) + "...";
-                //         }
-                //         html += `<div class="col-sm-2 drug-item hand" onclick="drug_click('${item.id}')" title="${item.drugName}"
-                //              data-toggle="tooltip" data-placement="top">
-                //             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
-                //         </div>`
-                //     })
-                // }
-                // $("#fzsl-html").html(html)
-                // html = "";
-                // if (qita.length > 0) {
-                //     html = "<h3>其他<a href=\"\" name=\"qt\"></a></h3>";
-                //     qita.forEach(item => {
-                //         item.drugTypeStr = "其他";
-                //         let nameLimit6 = item.drugName
-                //         if (item.drugName.length > 6) {
-                //             nameLimit6 = item.drugName.substring(0, 6) + "...";
-                //         }
-                //         html += `<div class="col-sm-2 drug-item hand" onclick="drug_click('${item.id}')" title="${item.drugName}"
-                //              data-toggle="tooltip" data-placement="top">
-                //             <span>${nameLimit6}</span><br/><span>${item.drugSpecs}</span>
-                //         </div>`
-                //     })
-                // }
-                // $("#qt-html").html(html)
                 $("[data-toggle='tooltip']").tooltip();
             }
         });
@@ -617,12 +593,15 @@ debugger
 
     // 更新总金额
     function updateZje() {
+        console.log(tmpSyf,"tmpSyf")
         if (chufang_drugs.find(a => a.drugType == "business_zsl") != undefined) {
             tmpSyf = syf;
-            $("#zsje").css("display", "block").text("注射金额：" + syf);
+            $("#zsje").css("display", "block").text("注射金额：" + tmpSyf);
+            console.log(tmpSyf,"tmpSyf")
         } else {
             tmpSyf = 0;
             $("#zsje").css("display", "none");
+            console.log(tmpSyf,"tmpSyf")
         }
         drug_amount = 0;
         total_amount = 0;

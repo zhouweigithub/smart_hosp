@@ -31,6 +31,15 @@ public interface ITDrugInfoService
     public List<TDrugInfo> selectTDrugInfoList(TDrugInfo tDrugInfo);
 
     /**
+     * 根据药品名称查询药品信息
+     *
+     * @param drugName 药品名称
+     * @return 药品信息集合
+     */
+    public TDrugInfo selectTDrugInfo(String drugName);
+
+
+    /**
      * 新增药品信息
      * 
      * @param tDrugInfo 药品信息

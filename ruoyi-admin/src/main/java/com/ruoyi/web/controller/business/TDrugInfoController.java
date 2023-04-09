@@ -63,6 +63,18 @@ public class TDrugInfoController extends BaseController
     }
 
     /**
+     * 根据药品名称查询药品信息
+     */
+    @RequiresPermissions("system:info:getByName")
+    @PostMapping("/getByName")
+    @ResponseBody
+    public TDrugInfo getByName(String drugName)
+    {
+        TDrugInfo tDrugInfo = tDrugInfoService.selectTDrugInfo(drugName);
+        return tDrugInfo;
+    }
+
+    /**
      * 导出药品信息列表
      */
     @RequiresPermissions("system:info:export")

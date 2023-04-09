@@ -112,7 +112,7 @@
             <if test="doctorid != null">#{doctorid},</if>
             <if test="pharmacyid != null">#{pharmacyid},</if>
             <if test="nurseid != null">#{nurseid},</if>
-            <if test="zsAmount != null">#{zsAmount},</if>
+            <if test="zsAmount != null and zsAmount != 0">#{zsAmount},</if>
             <if test="drugAmount != null">#{drugAmount},</if>
             <if test="totalAmount != null">#{totalAmount},</if>
             <if test="crtime != null">#{crtime},</if>

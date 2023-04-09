@@ -28,6 +28,13 @@ public interface TDrugInfoMapper
     public List<TDrugInfo> selectTDrugInfoList(TDrugInfo tDrugInfo);
 
     /**
+     * 查询药品信息
+     *
+     * @param id 药品信息主键
+     * @return 药品信息
+     */
+    public TDrugInfo selectTDrugInfoByName(String tDrugInfo);
+    /**
      * 新增药品信息
      * 
      * @param tDrugInfo 药品信息
