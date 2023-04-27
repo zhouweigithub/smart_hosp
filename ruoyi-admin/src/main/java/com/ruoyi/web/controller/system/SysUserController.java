@@ -78,6 +78,16 @@ public class SysUserController extends BaseController
         return getDataTable(list);
     }
 
+//    @RequiresPermissions("system:user:getByDeptId")
+    @PostMapping("/getByDeptId")
+    @ResponseBody
+    public TableDataInfo getByDeptId(Long deptId)
+    {
+        startPage();
+        List<SysUser> list = userService.selectByDeptId(deptId);
+        return getDataTable(list);
+    }
+
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)
     @RequiresPermissions("system:user:export")
     @PostMapping("/export")

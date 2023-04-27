@@ -66,6 +66,8 @@ public interface SysUserMapper
      */
     public SysUser selectUserById(Long userId);
 
+    public List<SysUser> selectByDeptId(Long deptId);
+
     /**
      * 通过用户ID删除用户
      * 

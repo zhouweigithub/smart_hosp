@@ -32,11 +32,23 @@
                             <input type="text" name="idNumber" search="search"/>
                         </li>
                         <li>
+                            <label>医生：</label>
+                            <select name="doctorid" id="doctorid" th:with="users=${@sysuser.getUsers(110)}">
+                                <option value="">全部</option>
+                                <option th:each="user : ${users}" th:text="${user.userName}"
+                                        th:value="${user.userId}"></option>
+                            </select>
+                        </li>
+                        <li>
                             <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
                                     class="fa fa-search"></i>&nbsp;搜索</a>
                             <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
                                     class="fa fa-refresh"></i>&nbsp;重置</a>
                         </li>
+                        <li><a class="btn btn-warning btn-rounded btn-sm" onclick="$.table.exportExcel()"
+                               shiro:hasPermission="system:dict:export">
+                            <i class="fa fa-download"></i> 导出
+                        </a></li>
                     </ul>
                 </div>
             </form>
@@ -111,7 +123,7 @@
                 {
                     field: 'crtime',
                     title: '创建时间',
-                    sortable: true ,
+                    sortable: true,
                 },
                 {
                     title: '操作',

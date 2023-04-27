@@ -1,6 +1,8 @@
 package com.ruoyi.system.service;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.SysUserRole;
 
@@ -211,4 +213,11 @@ public interface ISysUserService
      * @return 结果
      */
     public int changeStatus(SysUser user);
+
+
+    // 查询部门内所有用户信息
+    public List<SysUser> selectByDeptId(Long deptId);
+
+
+
 }
