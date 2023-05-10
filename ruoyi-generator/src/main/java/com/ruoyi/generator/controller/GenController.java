@@ -38,7 +38,7 @@ import com.ruoyi.generator.service.IGenTableColumnService;
 import com.ruoyi.generator.service.IGenTableService;
 
 /**
- * 代码生成 操作处理1
+ * 代码生成 操作处理
  * 
  * @author ruoyi
  */
